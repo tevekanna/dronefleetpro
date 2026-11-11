@@ -1,0 +1,27 @@
+meta {
+  name: 06 Get Schedule
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{base_url}}/api/v1/maintenance-schedules/{{schedule_id}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+tests {
+  test("status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("id matches schedule_id env var", function() {
+    expect(res.getBody().id).to.equal(Number(bru.getEnvVar("schedule_id")));
+  });
+  test("name is Propeller inspection", function() {
+    expect(res.getBody().name).to.equal("Propeller inspection");
+  });
+}

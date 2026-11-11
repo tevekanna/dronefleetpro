@@ -1,0 +1,36 @@
+meta {
+  name: 04 Filter by pilot_id
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{base_url}}/api/v1/flights?pilot_id={{flights_pivot_pilot_id}}&per_page=50
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+docs {
+  Skipped if the dev DB has no flights with a pilot_id (the pivot env var
+  will be empty in that case). Re-seed at least one flight with a pilot
+  to exercise this branch.
+}
+
+tests {
+  test("status is 200 OR 400 (no pivot pilot)", function() {
+    const s = res.getStatus();
+    expect(s === 200 || s === 400).to.equal(true);
+  });
+  test("when 200, every returned flight has the requested pilot_id", function() {
+    if (res.getStatus() !== 200) return;
+    const target = Number(bru.getEnvVar("flights_pivot_pilot_id"));
+    if (!Number.isFinite(target) || target === 0) return;
+    res.getBody().flights.forEach(f => {
+      expect(f.pilot_id).to.equal(target);
+    });
+  });
+}

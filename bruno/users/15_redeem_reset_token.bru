@@ -1,0 +1,22 @@
+meta {
+  name: 15 Redeem the reset token to set a new password
+  type: http
+  seq: 15
+}
+
+post {
+  url: {{base_url}}/api/v1/auth/redeem-token
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "token": "{{reset_token}}",
+    "new_password": "reset-password-12345"
+  }
+}
+
+tests {
+  test("status is 204", function() { expect(res.getStatus()).to.equal(204); });
+}

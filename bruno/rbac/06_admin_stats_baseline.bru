@@ -1,0 +1,41 @@
+meta {
+  name: 06 Admin captures org-wide flight stats baseline
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{base_url}}/api/v1/flights/stats
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{admin_token}}
+}
+
+docs {
+  Captures the admin-perspective (org-wide) flight stats baseline so the
+  pilot-perspective assertion in test 14 has something independent to
+  compare against. Under B2, `GET /flights/stats` returns the same totals
+  for every authenticated role in the same org.
+}
+
+script:post-response {
+  if (res.getStatus() === 200) {
+    var b = res.getBody();
+    bru.setEnvVar("org_total_flights", String(b.total_flights));
+    bru.setEnvVar("org_total_seconds", String(b.total_seconds));
+  }
+}
+
+tests {
+  test("status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("stats payload has total_flights and total_seconds", function() {
+    var b = res.getBody();
+    expect(b).to.have.property("total_flights").that.is.a("number");
+    expect(b).to.have.property("total_seconds").that.is.a("number");
+  });
+}

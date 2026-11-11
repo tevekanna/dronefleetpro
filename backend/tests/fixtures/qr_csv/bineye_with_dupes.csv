@@ -1,0 +1,6 @@
+pinned,_datetime,format,name,content,error_correction_level,version,sequence_size,sequence_index,sequence_id,gtin_country,gtin_add_on,gtin_price,gtin_issue_number
+"0","2026-04-30 12:00:00:000","QRCode",,"0K2TEST0000011","L","1","-1","-1","",,,,,
+"0","2026-04-30 12:00:01:000","QRCode",,"0K2TEST0000011","L","1","-1","-1","",,,,,
+"0","2026-04-30 12:00:02:000","QRCode",,"0K2TEST0000011","L","1","-1","-1","",,,,,
+"0","2026-04-30 12:00:03:000","QRCode",,"0K2TEST0000012","L","1","-1","-1","",,,,,
+"0","2026-04-30 12:00:04:000","QRCode",,"","","","-1","-1","",,,,,

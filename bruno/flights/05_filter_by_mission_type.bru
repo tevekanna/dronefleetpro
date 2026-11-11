@@ -1,0 +1,30 @@
+meta {
+  name: 05 Filter by mission_type
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{base_url}}/api/v1/flights?mission_type={{flights_pivot_mission_type}}&per_page=50
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+tests {
+  test("status is 200 OR 400 (no pivot mission_type)", function() {
+    const s = res.getStatus();
+    expect(s === 200 || s === 400).to.equal(true);
+  });
+  test("when 200, every returned flight has the requested mission_type", function() {
+    if (res.getStatus() !== 200) return;
+    const target = bru.getEnvVar("flights_pivot_mission_type");
+    if (!target) return;
+    res.getBody().flights.forEach(f => {
+      expect(f.mission_type).to.equal(target);
+    });
+  });
+}

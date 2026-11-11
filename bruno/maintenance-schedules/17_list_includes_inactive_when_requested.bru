@@ -1,0 +1,30 @@
+meta {
+  name: 17 List Includes Inactive When Requested
+  type: http
+  seq: 17
+}
+
+get {
+  url: {{base_url}}/api/v1/maintenance-schedules?include_inactive=true
+  body: none
+  auth: bearer
+}
+
+params:query {
+  include_inactive: true
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+tests {
+  test("status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("deleted schedule_id IS in the response", function() {
+    const deletedId = Number(bru.getEnvVar("schedule_id"));
+    const ids = res.getBody().map(s => s.id);
+    expect(ids.includes(deletedId)).to.equal(true);
+  });
+}

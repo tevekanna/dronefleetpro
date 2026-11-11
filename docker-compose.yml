@@ -1,0 +1,81 @@
+# Production stack: PostgreSQL, backend, frontend and an nginx reverse proxy.
+#
+# Serves plain HTTP on port 80. Terminate TLS in front of it, or supply your
+# own TLS-enabled nginx configuration (see README.md, "TLS").
+#
+# Usage:
+#   cp .env.example .env    # then set DB_PASSWORD, JWT_SECRET, JWT_REFRESH_SECRET
+#   docker compose up -d --build
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: dronefleet
+      POSTGRES_USER: dronefleet
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dronefleet"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:3000/api/v1/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    environment:
+      DATABASE_URL: postgresql://dronefleet:${DB_PASSWORD}@db:5432/dronefleet
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
+      UPLOAD_DIR: /app/uploads
+      RUST_LOG: ${RUST_LOG:-info}
+      DJI_API_KEY_GLOBAL: ${DJI_API_KEY_GLOBAL:-}
+      # Optional; see .env.example. Empty = locked account + one-time set-password link in the log.
+      DFP_BOOTSTRAP_ADMIN_PASSWORD: ${DFP_BOOTSTRAP_ADMIN_PASSWORD:-}
+      # Optional; see .env.example. The defaults match the backend's own.
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173}
+      RATE_LIMIT_AUTH_PER_SECONDS: ${RATE_LIMIT_AUTH_PER_SECONDS:-12}
+      RATE_LIMIT_AUTH_BURST: ${RATE_LIMIT_AUTH_BURST:-6}
+    volumes:
+      - uploads:/app/uploads
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        # Source-code link override for modified versions (see .env.example).
+        VITE_SOURCE_CODE_URL: ${VITE_SOURCE_CODE_URL:-}
+    restart: unless-stopped
+    depends_on:
+      - backend
+
+  nginx:
+    image: nginx:alpine
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+      frontend:
+        condition: service_started
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+
+volumes:
+  db_data:
+  uploads:

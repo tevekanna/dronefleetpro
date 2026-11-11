@@ -1,0 +1,41 @@
+meta {
+  name: 06 Sync seeded "Annual service" template across all aircraft
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{base_url}}/api/v1/maintenance-schedule-templates/{{seeded_template_id}}/sync
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+body:json {
+  {
+  }
+}
+
+docs {
+  Picks the first seeded template (model_id, name "Annual service" for
+  most models; exact name depends on which model_id sorts first). With
+  an empty body the handler syncs every aircraft in the org with the
+  template's model_id that already has a schedule with the matching
+  name. This run is meaningful only after `seed-defaults` has populated
+  schedules for at least one aircraft; otherwise expect synced == 0
+  and that's still a passing 200 response.
+}
+
+tests {
+  test("status is 200", function() { expect(res.getStatus()).to.equal(200); });
+  test("synced is a non-negative integer", function() {
+    expect(res.getBody().synced).to.be.a('number');
+    expect(res.getBody().synced).to.be.at.least(0);
+  });
+  test("schedules_updated equals synced (1:1 today)", function() {
+    expect(res.getBody().schedules_updated).to.equal(res.getBody().synced);
+  });
+}

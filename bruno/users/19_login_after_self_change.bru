@@ -1,0 +1,22 @@
+meta {
+  name: 19 Login with the self-service-changed password
+  type: http
+  seq: 19
+}
+
+post {
+  url: {{base_url}}/api/v1/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "{{created_user_email}}",
+    "password": "self-service-changed-12345"
+  }
+}
+
+tests {
+  test("status is 200", function() { expect(res.getStatus()).to.equal(200); });
+}

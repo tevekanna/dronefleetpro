@@ -1,0 +1,69 @@
+meta {
+  name: 01 Per-username login limiter — 11th attempt is 429
+  type: http
+  seq: 1
+}
+
+script:pre-request {
+  // Use a per-run unique email so accumulated auth_attempts rows from
+  // prior runs don't preload the counter. The email targets a non-existent
+  // user so the backend returns 401 on every attempt — we're testing the
+  // limiter, not the credential check. Bruno's bundled axios rejects on
+  // 4xx/5xx regardless of validateStatus, so we catch and read e.response.
+  const axios = require('axios');
+  const baseUrl = bru.getEnvVar('base_url');
+  const email = `bruno-rl-login-${Date.now()}-${Math.floor(Math.random() * 1e6)}@dronefleetpro.local.test`;
+  bru.setEnvVar("rl_login_email", email);
+
+  async function callStatus() {
+    try {
+      const r = await axios.post(`${baseUrl}/api/v1/auth/login`,
+        { email, password: 'wrong-password-attempt' });
+      return r.status;
+    } catch (e) {
+      if (e.response) return e.response.status;
+      throw e;
+    }
+  }
+
+  for (let i = 0; i < 10; i++) {
+    const s = await callStatus();
+    if (s !== 401) {
+      // 429 here would mean the per-IP layer fired before per-username.
+      // Dev compose sets BURST=100 (docker-compose.dev.yml), so 10 attempts
+      // shouldn't trip per-IP. If someone tightens the env, this test
+      // will need pacing.
+      throw new Error(`setup attempt ${i + 1}: expected 401, got ${s}`);
+    }
+  }
+}
+
+post {
+  url: {{base_url}}/api/v1/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "{{rl_login_email}}",
+    "password": "wrong-password-attempt"
+  }
+}
+
+tests {
+  test("11th attempt status is 429", function() {
+    expect(res.getStatus()).to.equal(429);
+  });
+  test("body has retry_after_seconds in (0, 900]", function() {
+    const body = res.getBody();
+    expect(body).to.have.property('retry_after_seconds');
+    expect(body.retry_after_seconds).to.be.a('number').and.to.be.above(0).and.to.be.at.most(15 * 60);
+  });
+  test("body error code is rate_limited", function() {
+    expect(res.getBody().error).to.equal('rate_limited');
+  });
+  test("Retry-After header present", function() {
+    expect(res.getHeader('retry-after')).to.exist;
+  });
+}

@@ -1,0 +1,17 @@
+meta {
+  name: 09 No JWT → 401
+  type: http
+  seq: 9
+}
+
+get {
+  url: {{base_url}}/api/v1/audit-log
+  body: none
+  auth: none
+}
+
+tests {
+  test("status is 401", function() {
+    expect(res.getStatus()).to.equal(401);
+  });
+}

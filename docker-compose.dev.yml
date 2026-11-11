@@ -1,0 +1,75 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: dronefleet
+      POSTGRES_USER: dronefleet
+      POSTGRES_PASSWORD: devpassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data_dev:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dronefleet"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  adminer:
+    image: adminer
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://dronefleet:devpassword@db:5432/dronefleet
+      JWT_SECRET: dev_jwt_secret_min_64_chars_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+      JWT_REFRESH_SECRET: dev_refresh_secret_min_64_chars_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+      UPLOAD_DIR: /app/uploads
+      RUST_LOG: debug
+      # Startup bootstrap (services/admin_bootstrap.rs): replaces the seed
+      # admin password on first start. This value is for local development
+      # and the Bruno/Playwright suites only. It is the publicly known seed
+      # password, and release builds reject it.
+      DFP_BOOTSTRAP_ADMIN_PASSWORD: dronefleet2025
+      # Auth rate limiter — relaxed for dev so the Bruno test suite, which
+      # makes ~10 sequential auth calls in a single run, doesn't trip the
+      # production-tight 5/min limit. Production deployments inherit the
+      # built-in defaults (per_seconds=12, burst=6 → 5/min, burst 5).
+      RATE_LIMIT_AUTH_PER_SECONDS: "1"
+      RATE_LIMIT_AUTH_BURST: "100"
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend:/app
+      - uploads_dev:/app/uploads
+      - cargo_cache:/usr/local/cargo/registry
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      VITE_API_URL: http://localhost:3000
+
+volumes:
+  db_data_dev:
+  uploads_dev:
+  cargo_cache:

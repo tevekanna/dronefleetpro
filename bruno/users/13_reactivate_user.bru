@@ -1,0 +1,23 @@
+meta {
+  name: 13 Reactivate the deactivated user
+  type: http
+  seq: 13
+}
+
+post {
+  url: {{base_url}}/api/v1/users/{{created_user_id}}/reactivate
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+tests {
+  test("status is 200", function() { expect(res.getStatus()).to.equal(200); });
+  test("user is now active", function() {
+    expect(res.getBody().is_active).to.equal(true);
+    expect(res.getBody().deactivated_at).to.equal(null);
+  });
+}

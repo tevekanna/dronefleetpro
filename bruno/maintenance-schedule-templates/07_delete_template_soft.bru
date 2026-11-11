@@ -1,0 +1,23 @@
+meta {
+  name: 07 Delete Template (soft — sets is_active=FALSE)
+  type: http
+  seq: 7
+}
+
+delete {
+  url: {{base_url}}/api/v1/maintenance-schedule-templates/{{test_template_id}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+tests {
+  test("status is 200", function() { expect(res.getStatus()).to.equal(200); });
+  test("response indicates deletion", function() {
+    expect(res.getBody().deleted).to.equal(true);
+    expect(res.getBody().id).to.be.a('number');
+  });
+}

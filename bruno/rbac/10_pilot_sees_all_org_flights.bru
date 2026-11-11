@@ -1,0 +1,72 @@
+meta {
+  name: 10 Pilot sees all org flights
+  type: http
+  seq: 10
+}
+
+get {
+  url: {{base_url}}/api/v1/flights?per_page=200
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{pilot_token}}
+}
+
+docs {
+  Under the B2 RBAC policy, every authenticated role sees all flights in
+  their org by default. Pilot users are no longer scoped to their own
+  pilot_id. Previously this test asserted the opposite — see commit
+  history before this file was renamed.
+
+  The cross-check asserts that at least one returned flight does NOT
+  belong to the requesting pilot. If the dev DB only ever has flights
+  from a single pilot, that assertion will fail — re-seed at least one
+  flight under a different pilot_id and re-run.
+
+  Also captures `pilot_other_flight_id` (the first flight in the
+  response whose `pilot_id` differs from the requester's) so test 13 can
+  exercise the cross-pilot detail-view path.
+}
+
+script:post-response {
+  if (res.getStatus() === 200) {
+    var ownPid = parseInt(bru.getEnvVar("pilot_pilot_id"), 10);
+    var body = res.getBody();
+    if (body && Array.isArray(body.flights)) {
+      var other = body.flights.find(function(f) {
+        return f.pilot_id !== null && f.pilot_id !== ownPid;
+      });
+      if (other) {
+        bru.setEnvVar("pilot_other_flight_id", String(other.id));
+        bru.setEnvVar("pilot_other_flight_pilot_id", String(other.pilot_id));
+      }
+    }
+  }
+}
+
+tests {
+  test("status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("response shape includes flights and total", function() {
+    var b = res.getBody();
+    expect(b).to.have.property("flights").that.is.an("array");
+    expect(b).to.have.property("total").that.is.a("number");
+  });
+  test("at least one flight is from another pilot (cross-check)", function() {
+    var ownPid = parseInt(bru.getEnvVar("pilot_pilot_id"), 10);
+    var body = res.getBody();
+    if (body.total === 0) return;
+    var hasOther = body.flights.some(function(f) {
+      return f.pilot_id !== null && f.pilot_id !== ownPid;
+    });
+    expect(hasOther, "expected at least one flight with pilot_id !== " + ownPid + " — seed dataset may only have one pilot's flights").to.equal(true);
+  });
+  test("response total matches unfiltered org-wide total", function() {
+    var unfiltered = parseInt(bru.getEnvVar("flights_total_unfiltered"), 10);
+    if (!Number.isFinite(unfiltered)) return;
+    expect(res.getBody().total, "pilot-role total should match admin-role unfiltered total under B2").to.equal(unfiltered);
+  });
+}

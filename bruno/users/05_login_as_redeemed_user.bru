@@ -1,0 +1,34 @@
+meta {
+  name: 05 Login with newly-set password works
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{base_url}}/api/v1/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "{{created_user_email}}",
+    "password": "redeemed-password-12345"
+  }
+}
+
+script:post-response {
+  if (res.getStatus() === 200 && res.getBody().token) {
+    bru.setEnvVar("created_user_token", res.getBody().token);
+  }
+}
+
+tests {
+  test("status is 200", function() { expect(res.getStatus()).to.equal(200); });
+  test("token returned", function() {
+    expect(res.getBody()).to.have.property('token').that.is.a('string');
+  });
+  test("user role surfaced as 'viewer'", function() {
+    expect(res.getBody()).to.have.nested.property('user.role').that.equals('viewer');
+  });
+}

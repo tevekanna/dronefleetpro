@@ -1,0 +1,29 @@
+meta {
+  name: 11 Validation — secondary_interval_type without _value returns 400
+  type: http
+  seq: 11
+}
+
+post {
+  url: {{base_url}}/api/v1/maintenance-schedule-templates
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+body:json {
+  {
+    "model_id": {{seeded_template_model_id}},
+    "name": "TEST_BadSecondary",
+    "interval_type": "flight_hours",
+    "interval_value": 50,
+    "secondary_interval_type": "calendar_days"
+  }
+}
+
+tests {
+  test("status is 400", function() { expect(res.getStatus()).to.equal(400); });
+}

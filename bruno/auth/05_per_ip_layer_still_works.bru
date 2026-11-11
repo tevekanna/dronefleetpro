@@ -1,0 +1,62 @@
+meta {
+  name: 05 Regression — per-IP tower_governor layer still triggers (different usernames each request)
+  type: http
+  seq: 5
+}
+
+script:pre-request {
+  // Hammer /auth/login with a DIFFERENT email per request so the
+  // per-username Postgres counter can never trip. Any 429 we see must
+  // therefore come from the per-IP tower_governor layer, proving the
+  // existing layer is still in effect after this PR.
+  //
+  // Dev compose sets RATE_LIMIT_AUTH_PER_SECONDS=1 and BURST=100 (see
+  // docker-compose.dev.yml), so the test fires 200 attempts — comfortably
+  // above burst 100 even with the slow refill of 1 token/s. Production
+  // defaults are tighter (12 / 6) so any 429 in dev's loose config implies
+  // the layer would also fire under prod settings.
+  const axios = require('axios');
+  const baseUrl = bru.getEnvVar('base_url');
+
+  async function loginStatus(email) {
+    try {
+      const r = await axios.post(`${baseUrl}/api/v1/auth/login`, { email, password: 'wrong' });
+      return r.status;
+    } catch (e) {
+      if (e.response) return e.response.status;
+      throw e;
+    }
+  }
+
+  const statuses = [];
+  for (let i = 0; i < 200; i++) {
+    const email = `bruno-rl-perip-${Date.now()}-${i}-${Math.floor(Math.random() * 1e9)}@dronefleetpro.local.test`;
+    statuses.push(await loginStatus(email));
+  }
+  bru.setEnvVar("rl_perip_statuses", JSON.stringify(statuses));
+}
+
+get {
+  url: {{base_url}}/api/v1/health
+  auth: none
+}
+
+docs {
+  The /health request below is a sentinel — Bruno requires every .bru to
+  have one HTTP request. The real test logic lives in the pre-request
+  script above; we assert on the captured status array. /health bypasses
+  both rate limiters so it's safe noise.
+}
+
+tests {
+  test("at least one of the 200 rapid logins returned 429 (per-IP layer fired)", function() {
+    const statuses = JSON.parse(bru.getEnvVar("rl_perip_statuses") || "[]");
+    const num429 = statuses.filter(s => s === 429).length;
+    if (num429 === 0) {
+      const distribution = {};
+      statuses.forEach(s => { distribution[s] = (distribution[s] || 0) + 1; });
+      throw new Error(`expected ≥1 status of 429, got distribution: ${JSON.stringify(distribution)}`);
+    }
+    expect(num429).to.be.at.least(1);
+  });
+}

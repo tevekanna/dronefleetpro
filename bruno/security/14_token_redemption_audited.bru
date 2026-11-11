@@ -1,0 +1,45 @@
+meta {
+  name: 14 Audit log surfaces the new auth action types
+  type: http
+  seq: 14
+}
+
+post {
+  url: {{base_url}}/api/v1/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "admin@dronefleetpro.local",
+    "password": "dronefleet2025"
+  }
+}
+
+docs {
+  Final test of the suite. Re-authenticates (test 13 just logged out the
+  JWT) so subsequent verification calls are possible. The TOKEN_REDEEMED
+  audit row is exercised by the users folder (users/04 redeems an invitation
+  token, which writes the row). Running the security folder after users
+  is the pattern; if security runs first, the row is still written after
+  the next users-suite run.
+
+  This re-login itself produces a fresh LOGIN_SUCCESS row, completing the
+  audit-event coverage tour started in test 10.
+}
+
+script:post-response {
+  if (res.getStatus() === 200 && res.getBody() && res.getBody().token) {
+    bru.setEnvVar("access_token", res.getBody().token);
+  }
+}
+
+tests {
+  test("re-login succeeds (writes another LOGIN_SUCCESS audit row)", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("token stored for any post-suite verification", function() {
+    expect(bru.getEnvVar("access_token")).to.be.a('string').and.not.empty;
+  });
+}

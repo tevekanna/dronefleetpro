@@ -1,0 +1,28 @@
+meta {
+  name: 08 Update basic user fields
+  type: http
+  seq: 8
+}
+
+put {
+  url: {{base_url}}/api/v1/users/{{created_user_id}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+body:json {
+  {
+    "name": "Bruno Renamed"
+  }
+}
+
+tests {
+  test("status is 200", function() { expect(res.getStatus()).to.equal(200); });
+  test("name updated", function() {
+    expect(res.getBody().name).to.equal('Bruno Renamed');
+  });
+}

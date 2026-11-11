@@ -1,0 +1,35 @@
+meta {
+  name: 33 Technician cannot close incident
+  type: http
+  seq: 33
+}
+
+put {
+  url: {{base_url}}/api/v1/incidents/{{rbac_incident_id2}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{tech_token}}
+}
+
+body:json {
+  {
+    "status": "closed"
+  }
+}
+
+docs {
+  Technician created the incident? No — admin did. So the edit-own gate
+  also bites here, plus the close-transition gate. Either way, 403.
+
+  In future once a technician creates an incident, they could edit other
+  fields but not close it. That tighter scenario isn't covered here.
+}
+
+tests {
+  test("status is 403", function() {
+    expect(res.getStatus()).to.equal(403);
+  });
+}

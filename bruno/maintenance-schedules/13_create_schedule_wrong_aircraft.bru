@@ -1,0 +1,31 @@
+meta {
+  name: 13 Validation — Aircraft Not Found
+  type: http
+  seq: 13
+}
+
+post {
+  url: {{base_url}}/api/v1/maintenance-schedules
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+body:json {
+  {
+    "aircraft_id": 999999,
+    "name": "Wrong aircraft test",
+    "interval_type": "flight_hours",
+    "interval_value": 25
+  }
+}
+
+tests {
+  test("status is 400 or 404", function() {
+    const s = res.getStatus();
+    expect(s === 400 || s === 404).to.equal(true);
+  });
+}

@@ -1,0 +1,21 @@
+meta {
+  name: 15 Non-admin → 403 on filters
+  type: http
+  seq: 15
+}
+
+get {
+  url: {{base_url}}/api/v1/audit-log/filters
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{non_admin_token}}
+}
+
+tests {
+  test("status is 403", function() {
+    expect(res.getStatus()).to.equal(403);
+  });
+}

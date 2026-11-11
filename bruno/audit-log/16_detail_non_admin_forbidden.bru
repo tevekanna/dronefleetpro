@@ -1,0 +1,26 @@
+meta {
+  name: 16 Non-admin → 403 on detail
+  type: http
+  seq: 16
+}
+
+get {
+  url: {{base_url}}/api/v1/audit-log/{{audit_update_id}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{non_admin_token}}
+}
+
+docs {
+  Uses audit_update_id seeded by 01_list_default.bru. Falls back to 1 in the
+  env so we still hit the admin gate before the row lookup.
+}
+
+tests {
+  test("status is 403", function() {
+    expect(res.getStatus()).to.equal(403);
+  });
+}

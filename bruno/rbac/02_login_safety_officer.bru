@@ -1,0 +1,37 @@
+meta {
+  name: 02 Login safety_officer (seeds safety_token)
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{base_url}}/api/v1/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "rbac-safety@dronefleetpro.local",
+    "password": "dronefleet2025"
+  }
+}
+
+docs {
+  Run bruno/rbac/fixtures.sql first to seed the RSO user.
+}
+
+script:post-response {
+  if (res.getStatus() === 200 && res.getBody() && res.getBody().token) {
+    bru.setEnvVar("safety_token", res.getBody().token);
+  }
+}
+
+tests {
+  test("status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("safety_token stored", function() {
+    expect(bru.getEnvVar("safety_token")).to.be.a('string').and.not.empty;
+  });
+}

@@ -1,0 +1,101 @@
+meta {
+  name: 03 Create user returns plaintext invitation token (once)
+  type: http
+  seq: 3
+}
+
+script:pre-request {
+  const axios = require('axios');
+  const baseUrl = bru.getEnvVar('base_url');
+  const token = bru.getEnvVar('access_token');
+  try {
+    const list = await axios.get(`${baseUrl}/api/v1/users`, {
+      params: { include_inactive: true },
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const stale = (list.data || []).find(u => u.user_code === 'BRT');
+    if (stale) {
+      // Backend validate_user_code requires exactly 3 uppercase A-Z
+      // letters, so we cannot use the literal `X{id}` form — random
+      // 3 letters instead. Collision risk in 26^3=17576 codes is
+      // negligible for a test cleanup.
+      let randomCode = '';
+      for (let i = 0; i < 3; i++) {
+        randomCode += String.fromCharCode(65 + Math.floor(Math.random() * 26));
+      }
+      const ts = Date.now();
+      await axios.put(`${baseUrl}/api/v1/users/${stale.id}`, {
+        user_code: randomCode,
+        email: `bruno-cleanup-${stale.id}-${ts}@dronefleetpro.local.deleted`,
+      }, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+    }
+  } catch (e) {
+    // Any failure here (network, auth, code-collision) is silently
+    // swallowed: a 409 from the real POST below is more informative
+    // than a script error masking the actual DB state.
+  }
+}
+
+post {
+  url: {{base_url}}/api/v1/users
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+body:json {
+  {
+    "name": "Bruno Test User",
+    "email": "bruno-test-{{$randomInt}}@dronefleetpro.local",
+    "user_code": "BRT",
+    "role": "viewer"
+  }
+}
+
+docs {
+  Each run creates a fresh user with a randomised email so re-runs don't
+  collide. The invitation token from the response is stashed in env vars
+  for the redemption test.
+
+  Why the pre-request cleanup exists:
+  The request body hardcodes user_code='BRT' and the users table has
+  UNIQUE(org_id, user_code), so on a rerun this POST returns 409 because
+  the prior run's BRT user is still in the table. DELETE /users/:id
+  only deactivates (soft-delete keeps user_code occupied — intentional,
+  EASA traceability requires the audit trail to stay intact), so the
+  unique slot cannot be freed via the usual delete path. The pre-request
+  script renames any existing BRT user out of the way (random 3-letter
+  user_code passing validate_user_code's A-Z constraint; email tagged
+  'bruno-cleanup-' for later bulk SQL cleanup if desired).
+}
+
+script:post-response {
+  if (res.getStatus() === 200) {
+    const body = res.getBody();
+    bru.setEnvVar("created_user_id", String(body.user.id));
+    bru.setEnvVar("created_user_email", body.user.email);
+    bru.setEnvVar("invitation_token", body.invitation_token);
+  }
+}
+
+tests {
+  test("status is 200", function() { expect(res.getStatus()).to.equal(200); });
+  test("response contains user object", function() {
+    expect(res.getBody()).to.have.nested.property('user.id');
+  });
+  test("response contains plaintext invitation_token (43 chars)", function() {
+    const t = res.getBody().invitation_token;
+    expect(t).to.be.a('string').with.lengthOf(43);
+  });
+  test("response contains expires_at ISO string", function() {
+    expect(res.getBody().expires_at).to.match(/\d{4}-\d{2}-\d{2}T/);
+  });
+  test("user_code uppercased", function() {
+    expect(res.getBody().user.user_code).to.equal('BRT');
+  });
+}

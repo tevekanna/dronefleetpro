@@ -1,0 +1,22 @@
+meta {
+  name: 14 Delete Schedule (soft)
+  type: http
+  seq: 14
+}
+
+delete {
+  url: {{base_url}}/api/v1/maintenance-schedules/{{schedule_id}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+tests {
+  test("status is 200 or 204", function() {
+    const s = res.getStatus();
+    expect(s === 200 || s === 204).to.equal(true);
+  });
+}

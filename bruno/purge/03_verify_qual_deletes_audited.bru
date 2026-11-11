@@ -1,0 +1,31 @@
+meta {
+  name: 03 Verify pilot_qualifications DELETEs landed in audit_log
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{base_url}}/api/v1/audit-log?table_name=pilot_qualifications&action=DELETE&per_page=10
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{purge_admin_token}}
+}
+
+tests {
+  test("status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("at least 2 pilot_qualifications DELETE rows visible to test-org admin", function() {
+    expect(res.getBody().items.length).to.be.at.least(2);
+  });
+  test("each entry carries a before snapshot in diff", function() {
+    res.getBody().items.slice(0, 2).forEach(item => {
+      expect(item.action).to.equal('DELETE');
+      expect(item.table_name).to.equal('pilot_qualifications');
+      expect(item.has_diff).to.equal(true);
+    });
+  });
+}

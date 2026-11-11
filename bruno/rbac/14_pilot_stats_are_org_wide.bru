@@ -1,0 +1,49 @@
+meta {
+  name: 14 Pilot stats are org-wide (B2)
+  type: http
+  seq: 14
+}
+
+get {
+  url: {{base_url}}/api/v1/flights/stats
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{pilot_token}}
+}
+
+docs {
+  Under B2, `GET /flights/stats` is no longer scoped to pilot_id for
+  pilot-role users. The pilot must see the same `total_flights` and
+  `total_seconds` as the admin baseline captured in test 06.
+
+  This guards against re-introducing the pilot-self filter on
+  `get_stats` (handlers/flights/crud.rs::get_stats). If the totals
+  reported here ever drop below the admin baseline, that handler is
+  filtering again.
+}
+
+tests {
+  test("status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("stats payload has total_flights and total_seconds", function() {
+    var b = res.getBody();
+    expect(b).to.have.property("total_flights").that.is.a("number");
+    expect(b).to.have.property("total_seconds").that.is.a("number");
+  });
+  test("total_flights matches admin baseline from test 06", function() {
+    var baseline = parseInt(bru.getEnvVar("org_total_flights"), 10);
+    if (!Number.isFinite(baseline)) {
+      throw new Error("org_total_flights not set — test 06 must run before test 14");
+    }
+    expect(res.getBody().total_flights, "pilot total_flights should match admin baseline under B2").to.equal(baseline);
+  });
+  test("total_seconds matches admin baseline from test 06", function() {
+    var baseline = parseInt(bru.getEnvVar("org_total_seconds"), 10);
+    if (!Number.isFinite(baseline)) return;
+    expect(res.getBody().total_seconds, "pilot total_seconds should match admin baseline under B2").to.equal(baseline);
+  });
+}

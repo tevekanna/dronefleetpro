@@ -1,0 +1,38 @@
+meta {
+  name: 13 Search filter on diff_jsonb
+  type: http
+  seq: 13
+}
+
+get {
+  url: {{base_url}}/api/v1/audit-log?search=id&per_page=10
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+docs {
+  Free-text search uses ILIKE on diff_jsonb::text. Searching for "id" is broad
+  enough that any non-empty audit log will return matches. The point is to
+  verify the parameter is accepted and the filter is applied.
+}
+
+tests {
+  test("status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("response has paginated shape", function() {
+    const b = res.getBody();
+    expect(b).to.have.property('items').that.is.an('array');
+    expect(b).to.have.property('total').that.is.a('number');
+  });
+  test("returned items are well-formed", function() {
+    const items = res.getBody().items;
+    items.forEach(i => {
+      expect(i).to.have.property('id');
+    });
+  });
+}

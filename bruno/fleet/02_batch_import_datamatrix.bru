@@ -1,0 +1,44 @@
+meta {
+  name: 02 Batch import — Binary Eye DataMatrix regression
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{base_url}}/api/v1/fleet/batch-import
+  body: multipartForm
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+body:multipart-form {
+  entity_type: controller
+  file: @file(../backend/tests/fixtures/qr_csv/99ctr-mavicpro.csv)
+}
+
+tests {
+  test("status is 200", function() { expect(res.getStatus()).to.equal(200); });
+  test("DataMatrix row is accepted", function() {
+    expect(res.getBody().total_parsed).to.equal(1);
+  });
+  test("0 errors", function() {
+    expect(res.getBody().errors.length).to.equal(0);
+  });
+  test("the DataMatrix SN was extracted", function() {
+    expect(res.getBody().rows[0].serial_number).to.equal("08WTEST0000005");
+  });
+}
+
+docs {
+  Regression guard for DataMatrix QR symbology. Binary Eye scans both
+  QRCode and DataMatrix symbols, and the "format" column distinguishes
+  them. The parser must accept both — accidentally filtering on
+  format == "QRCode" would lose every DataMatrix row.
+
+  This test pins that contract by importing a real DataMatrix scan
+  (a 16x16 DataMatrix label on a Mavic Pro controller) and confirming
+  it survives the format filter.
+}

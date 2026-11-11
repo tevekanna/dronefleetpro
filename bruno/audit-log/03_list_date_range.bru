@@ -1,0 +1,30 @@
+meta {
+  name: 03 List filtered by date range
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{base_url}}/api/v1/audit-log?from=2026-04-20&to=2026-04-20&per_page=20
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+tests {
+  test("status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("all items fall within 2026-04-20 UTC bounds", function() {
+    const items = res.getBody().items;
+    items.forEach(i => {
+      const d = new Date(i.created_at);
+      const start = new Date('2026-04-20T00:00:00Z');
+      const end   = new Date('2026-04-20T23:59:59.999Z');
+      expect(d >= start && d <= end).to.equal(true);
+    });
+  });
+}

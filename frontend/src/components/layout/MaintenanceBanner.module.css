@@ -1,0 +1,35 @@
+/* SPDX-License-Identifier: AGPL-3.0-only */
+/* Copyright (C) 2026 Lars Wallström */
+
+.banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  background: color-mix(in srgb, var(--color-critical) 18%, var(--color-bg-surface));
+  border-bottom: 1px solid color-mix(in srgb, var(--color-critical) 50%, transparent);
+  color: var(--color-text-primary);
+  font-size: 0.86rem;
+  font-family: var(--font-body);
+}
+
+.icon { color: var(--color-critical); flex-shrink: 0; }
+
+.viewLink {
+  margin-left: auto;
+  color: var(--color-accent);
+  text-decoration: none;
+  font-weight: 500;
+}
+.viewLink:hover { text-decoration: underline; }
+
+.closeBtn {
+  background: transparent;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  padding: 2px 8px;
+  font-size: 1.1rem;
+  line-height: 1;
+}
+.closeBtn:hover { color: var(--color-text-primary); }

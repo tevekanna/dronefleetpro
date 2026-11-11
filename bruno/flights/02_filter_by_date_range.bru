@@ -1,0 +1,29 @@
+meta {
+  name: 02 Filter by date range
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{base_url}}/api/v1/flights?date_from=2024-01-01&date_to=2030-12-31&per_page=50
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+tests {
+  test("status is 200", function() { expect(res.getStatus()).to.equal(200); });
+  test("every returned flight is within the date range", function() {
+    const lo = '2024-01-01T00:00:00Z';
+    const hi = '2030-12-31T23:59:59Z';
+    res.getBody().flights.forEach(f => {
+      if (f.flight_datetime) {
+        expect(f.flight_datetime >= lo).to.equal(true);
+        expect(f.flight_datetime <= hi).to.equal(true);
+      }
+    });
+  });
+}

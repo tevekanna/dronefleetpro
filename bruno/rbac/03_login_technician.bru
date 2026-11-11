@@ -1,0 +1,38 @@
+meta {
+  name: 03 Login technician (seeds tech_token)
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{base_url}}/api/v1/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "rbac-tech@dronefleetpro.local",
+    "password": "dronefleet2025"
+  }
+}
+
+docs {
+  Run bruno/rbac/fixtures.sql first to seed the RTE user.
+}
+
+script:post-response {
+  if (res.getStatus() === 200 && res.getBody() && res.getBody().token) {
+    bru.setEnvVar("tech_token", res.getBody().token);
+    bru.setEnvVar("tech_user_code", res.getBody().user.user_code);
+  }
+}
+
+tests {
+  test("status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("tech_token stored", function() {
+    expect(bru.getEnvVar("tech_token")).to.be.a('string').and.not.empty;
+  });
+}

@@ -1,0 +1,29 @@
+meta {
+  name: 06 Login rate limit returns 429 with Retry-After
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{base_url}}/api/v1/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "rl-test@dronefleetpro.local",
+    "password": "wrong-password-on-purpose"
+  }
+}
+
+tests {
+  test("status is 429 (rate limited)", function() {
+    expect(res.getStatus()).to.equal(429);
+  });
+  test("Retry-After header is present", function() {
+    const retryAfter = res.getHeader("retry-after") || res.getHeader("Retry-After");
+    expect(retryAfter).to.not.be.undefined;
+    expect(retryAfter).to.not.equal("");
+  });
+}

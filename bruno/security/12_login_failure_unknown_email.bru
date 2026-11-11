@@ -1,0 +1,42 @@
+meta {
+  name: 12 Failed login (unknown email) writes LOGIN_FAILURE with NULL user
+  type: http
+  seq: 12
+}
+
+post {
+  url: {{base_url}}/api/v1/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "nonexistent-email-{{$randomInt}}@dronefleetpro.local",
+    "password": "doesnt-matter-no-such-user"
+  }
+}
+
+docs {
+  When the email doesn't match any user, the audit row is written with
+  org_id = NULL, user_id = NULL, and user_code = "?". The diff carries
+  the attempted email so brute-force enumeration is still detectable at
+  the system level.
+
+  These NULL-org rows do NOT surface in any tenant's `/api/v1/audit-log`
+  view (which filters `WHERE org_id = $1`). They're inspectable directly
+  in the DB by the operator. This test only verifies the HTTP response;
+  the row's existence is verified by inspecting `audit_log` table after
+  the suite runs.
+}
+
+tests {
+  test("status is 401", function() {
+    expect(res.getStatus()).to.equal(401);
+  });
+  test("response is generic (no enumeration leak)", function() {
+    const b = res.getBody();
+    const msg = (b && b.error) ? b.error.toLowerCase() : '';
+    expect(msg).to.match(/invalid email or password|invalid|unauthorized/);
+  });
+}

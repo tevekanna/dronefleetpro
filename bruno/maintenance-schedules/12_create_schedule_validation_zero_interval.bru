@@ -1,0 +1,30 @@
+meta {
+  name: 12 Validation — Zero interval_value
+  type: http
+  seq: 12
+}
+
+post {
+  url: {{base_url}}/api/v1/maintenance-schedules
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+body:json {
+  {
+    "aircraft_id": {{aircraft_id}},
+    "name": "Zero interval test",
+    "interval_type": "flight_hours",
+    "interval_value": 0
+  }
+}
+
+tests {
+  test("status is 400", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+}

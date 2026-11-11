@@ -1,0 +1,21 @@
+meta {
+  name: 07 Detail — not found is 404
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{base_url}}/api/v1/audit-log/999999999
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+tests {
+  test("status is 404", function() {
+    expect(res.getStatus()).to.equal(404);
+  });
+}

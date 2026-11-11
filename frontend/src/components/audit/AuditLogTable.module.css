@@ -1,0 +1,89 @@
+/* SPDX-License-Identifier: AGPL-3.0-only */
+/* Copyright (C) 2026 Lars Wallström */
+
+.tableWrapper {
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin-bottom: var(--space-4);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+}
+
+.th {
+  text-align: left;
+  padding: var(--space-2) var(--space-3);
+  color: var(--color-text-muted);
+  font-family: var(--font-label);
+  font-size: 0.72rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-bg-surface);
+  white-space: nowrap;
+}
+
+.tr {
+  cursor: pointer;
+}
+.tr:hover .td { background: var(--color-bg-input); }
+.tr[data-active="true"] .td {
+  background: color-mix(in srgb, var(--color-accent) 14%, transparent);
+}
+
+.td {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  vertical-align: top;
+}
+.tr:last-child .td { border-bottom: none; }
+
+.mono {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+}
+
+.muted { color: var(--color-text-muted); }
+
+.timeCell { white-space: nowrap; }
+.timeAbsolute { font-family: var(--font-display); font-size: 0.78rem; }
+.timeRelative { font-size: 0.72rem; color: var(--color-text-muted); }
+
+.ipCell {
+  font-family: var(--font-display);
+  font-size: 0.76rem;
+  color: var(--color-text-muted);
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.changedMore { color: var(--color-text-muted); margin-left: 4px; }
+
+.empty {
+  padding: var(--space-8);
+  text-align: center;
+  color: var(--color-text-muted);
+  background: var(--color-bg-surface);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.skeletonRow {
+  height: 42px;
+  background: var(--color-bg-input);
+  border-bottom: 1px solid var(--color-border);
+  animation: pulse 1.4s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 0.3; }
+}

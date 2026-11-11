@@ -1,0 +1,26 @@
+meta {
+  name: 13 Logout endpoint writes LOGOUT audit row and returns 204
+  type: http
+  seq: 13
+}
+
+post {
+  url: {{base_url}}/api/v1/auth/logout
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+docs {
+  Logout requires a valid JWT (the audit row needs to know who logged out).
+  Returns 204 on success. Token reuses the access_token from test 10.
+}
+
+tests {
+  test("status is 204", function() {
+    expect(res.getStatus()).to.equal(204);
+  });
+}

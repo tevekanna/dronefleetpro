@@ -1,0 +1,54 @@
+meta {
+  name: 01 Create Schedule (flight_hours)
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{base_url}}/api/v1/maintenance-schedules
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+body:json {
+  {
+    "aircraft_id": {{aircraft_id}},
+    "name": "Propeller inspection",
+    "interval_type": "flight_hours",
+    "interval_value": 25,
+    "last_performed_flight_hours": 10,
+    "warning_threshold": 0.8,
+    "is_critical": false
+  }
+}
+
+script:post-response {
+  if (res.getStatus() === 200 && res.getBody() && res.getBody().id) {
+    bru.setEnvVar("schedule_id", res.getBody().id);
+  }
+}
+
+tests {
+  test("status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("response has numeric id", function() {
+    expect(res.getBody().id).to.be.a('number');
+  });
+  test("next_due_flight_hours == 35 (10 + 25)", function() {
+    expect(res.getBody().next_due_flight_hours).to.equal(35);
+  });
+  test("next_due_at is null", function() {
+    expect(res.getBody().next_due_at).to.equal(null);
+  });
+  test("next_due_cycles is null", function() {
+    expect(res.getBody().next_due_cycles).to.equal(null);
+  });
+  test("is_active is true", function() {
+    expect(res.getBody().is_active).to.equal(true);
+  });
+}

@@ -1,0 +1,40 @@
+meta {
+  name: Batch Import Fleet Equipment
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:3000/api/v1/fleet/batch-import
+  body: multipartForm
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+body:multipart-form {
+  entity_type: battery
+  file: @file(sample_serials.csv)
+}
+
+docs {
+  Batch Import — Preview (multipart CSV upload)
+  Upload a CSV file with serial numbers to preview what will be imported.
+  The CSV can either have a "content" column (QR scanner export) or be a
+  plain list of serial numbers (one per line).
+
+  Commit step (separate request, run after reviewing the preview):
+    POST {{base_url}}/api/v1/fleet/batch-commit
+    auth: bearer {{access_token}}
+    body:json
+      {
+        "entity_type": "battery",
+        "rows": [
+          { "serial_number": "M61TEST0000042", "compatible_model": "Matrice 600", "max_cycles": 300 },
+          { "serial_number": "M3E12345678AB",  "compatible_model": "Matrice 3E",  "max_cycles": 300 }
+        ]
+      }
+  Only rows with status "new" from the preview should be sent here.
+}

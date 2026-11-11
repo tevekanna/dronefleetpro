@@ -1,0 +1,58 @@
+meta {
+  name: 09 Import preview surfaces equipment match
+  type: http
+  seq: 9
+}
+
+# Smoke test for the backend-driven equipment match in the import-preview
+# response (PR: feat/import-preview-match). The exhaustive 3-state matrix
+# (exact / prefix / none) is covered by the Rust integration tests in
+# backend/src/services/sn_matching.rs::tests; this test only verifies
+# that the live endpoint surfaces the new `aircraft_match` field on the
+# preview response so the frontend can consume it.
+#
+# The fixture CSV uses a fresh, unregistered SN so the preview returns
+# `aircraft_match: null` (the "Not registered" UX state). The Rust tests
+# cover the matched cases with seeded rows.
+
+post {
+  url: {{base_url}}/api/v1/flights/import
+  body: multipartForm
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+body:multipart-form {
+  file: @file(fixtures/preview_match_test.csv)
+}
+
+tests {
+  test("status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("preview returned", function() {
+    expect(res.getBody().preview).to.be.an('object');
+  });
+
+  test("preview.aircraft_serial extracted from CSV", function() {
+    expect(res.getBody().preview.aircraft_serial).to.equal('BRUNO-PREVIEW-MATCH-AC');
+  });
+
+  test("aircraft_match key present on response (null = unregistered)", function() {
+    // The CSV uses a fresh SN that has not been registered, so we
+    // expect aircraft_match to exist on the response and be null.
+    // The important assertion is that the *key* is part of the
+    // response shape — the frontend modal relies on it.
+    expect(res.getBody().preview).to.have.property('aircraft_match');
+    expect(res.getBody().preview.aircraft_match).to.be.null;
+  });
+
+  test("battery_match and controller_match keys present", function() {
+    expect(res.getBody().preview).to.have.property('battery_match');
+    expect(res.getBody().preview).to.have.property('controller_match');
+  });
+}

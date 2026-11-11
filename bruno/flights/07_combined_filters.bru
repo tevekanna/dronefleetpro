@@ -1,0 +1,37 @@
+meta {
+  name: 07 Combined filters (date + aircraft + EASA)
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{base_url}}/api/v1/flights?date_from=2024-01-01&date_to=2030-12-31&aircraft_id={{flights_pivot_aircraft_id}}&easa_category={{flights_pivot_easa_category}}&per_page=50
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+tests {
+  test("status is 200 OR 400", function() {
+    const s = res.getStatus();
+    expect(s === 200 || s === 400).to.equal(true);
+  });
+  test("combined filter result is a subset of the unfiltered total", function() {
+    if (res.getStatus() !== 200) return;
+    const filteredTotal = res.getBody().total;
+    const unfiltered = Number(bru.getEnvVar("flights_total_unfiltered"));
+    expect(filteredTotal).to.be.at.most(unfiltered);
+  });
+  test("when 200, every returned flight matches every filter", function() {
+    if (res.getStatus() !== 200) return;
+    const aId = Number(bru.getEnvVar("flights_pivot_aircraft_id"));
+    const ec = bru.getEnvVar("flights_pivot_easa_category");
+    res.getBody().flights.forEach(f => {
+      if (Number.isFinite(aId) && aId !== 0) expect(f.aircraft_id).to.equal(aId);
+      if (ec) expect(f.easa_category).to.equal(ec);
+    });
+  });
+}

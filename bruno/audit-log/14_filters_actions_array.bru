@@ -1,0 +1,34 @@
+meta {
+  name: 14 Filters response includes actions array
+  type: http
+  seq: 14
+}
+
+get {
+  url: {{base_url}}/api/v1/audit-log/filters
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+tests {
+  test("status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("actions is a deduplicated sorted array", function() {
+    const a = res.getBody().actions;
+    expect(a).to.be.an('array');
+    const sorted = [...a].sort();
+    expect(a).to.deep.equal(sorted);
+    expect(new Set(a).size).to.equal(a.length);
+  });
+  test("actions are non-empty uppercase strings", function() {
+    res.getBody().actions.forEach(a => {
+      expect(a).to.be.a('string').and.not.empty;
+      expect(a).to.equal(a.toUpperCase());
+    });
+  });
+}

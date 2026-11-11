@@ -1,0 +1,50 @@
+meta {
+  name: 00 Login as test-org admin (seeds purge_admin_token)
+  type: http
+  seq: 0
+}
+
+post {
+  url: {{base_url}}/api/v1/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "purge-audit@test.local",
+    "password": "dronefleet2025"
+  }
+}
+
+docs {
+  Requires a persistent test org and admin user. Seed once via psql:
+
+    INSERT INTO organisations (name, slug)
+    VALUES ('_purge_audit_test_', '_purge_audit_test_')
+    ON CONFLICT (slug) DO NOTHING;
+
+    INSERT INTO users (org_id, name, email, user_code, password_hash, role, is_active)
+    SELECT o.id, 'Purge Audit Admin', 'purge-audit@test.local', 'PAU',
+           '$2b$12$7T3ErfyTki4vQSnnFP6Spuw39JbFFRzMsrdsH/ZIFHgQrs0mJ13h.',
+           'admin', TRUE
+    FROM organisations o WHERE o.slug = '_purge_audit_test_'
+    ON CONFLICT (org_id, email) DO UPDATE SET role='admin', is_active=TRUE;
+
+  Password: dronefleet2025.
+}
+
+script:post-response {
+  if (res.getStatus() === 200 && res.getBody() && res.getBody().token) {
+    bru.setEnvVar("purge_admin_token", res.getBody().token);
+  }
+}
+
+tests {
+  test("status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("purge_admin_token stored", function() {
+    expect(bru.getEnvVar("purge_admin_token")).to.be.a('string').and.not.empty;
+  });
+}

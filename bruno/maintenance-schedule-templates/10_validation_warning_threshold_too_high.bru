@@ -1,0 +1,29 @@
+meta {
+  name: 10 Validation — warning_threshold > 1 returns 400
+  type: http
+  seq: 10
+}
+
+post {
+  url: {{base_url}}/api/v1/maintenance-schedule-templates
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+body:json {
+  {
+    "model_id": {{seeded_template_model_id}},
+    "name": "TEST_BadThreshold",
+    "interval_type": "calendar_days",
+    "interval_value": 30,
+    "warning_threshold": 1.5
+  }
+}
+
+tests {
+  test("status is 400", function() { expect(res.getStatus()).to.equal(400); });
+}

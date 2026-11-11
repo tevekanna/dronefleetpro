@@ -1,0 +1,55 @@
+meta {
+  name: 01 List (default, recent first)
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{base_url}}/api/v1/audit-log?per_page=10
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+script:post-response {
+  // Cache one UPDATE id for the detail test. Prefer an entry with a real before/after
+  // diff (changed_fields is a non-empty array) so the detail test has something to
+  // verify against.
+  if (res.getStatus() === 200) {
+    const items = res.getBody().items || [];
+    const update = items.find(i =>
+      i.action === 'UPDATE' && Array.isArray(i.changed_fields) && i.changed_fields.length > 0
+    );
+    if (update) bru.setEnvVar("audit_update_id", String(update.id));
+  }
+}
+
+tests {
+  test("status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("response has paginated shape", function() {
+    const b = res.getBody();
+    expect(b).to.have.property('items').that.is.an('array');
+    expect(b).to.have.property('page').that.is.a('number');
+    expect(b).to.have.property('per_page').that.is.a('number');
+    expect(b).to.have.property('total').that.is.a('number');
+    expect(b).to.have.property('total_pages').that.is.a('number');
+  });
+  test("per_page honoured", function() {
+    expect(res.getBody().items.length).to.be.at.most(10);
+  });
+  test("items sorted by created_at DESC", function() {
+    const items = res.getBody().items;
+    for (let i = 1; i < items.length; i++) {
+      expect(items[i-1].created_at >= items[i].created_at).to.equal(true);
+    }
+  });
+  test("INSERT entries report null changed_fields", function() {
+    const inserts = res.getBody().items.filter(i => i.action === 'INSERT');
+    inserts.forEach(i => expect(i.changed_fields).to.equal(null));
+  });
+}

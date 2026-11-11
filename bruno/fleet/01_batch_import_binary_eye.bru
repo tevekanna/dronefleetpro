@@ -1,0 +1,53 @@
+meta {
+  name: 01 Batch import — Binary Eye export (8 controllers)
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{base_url}}/api/v1/fleet/batch-import
+  body: multipartForm
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+body:multipart-form {
+  entity_type: controller
+  file: @file(../backend/tests/fixtures/qr_csv/ctr-mavicair.csv)
+}
+
+tests {
+  test("status is 200", function() { expect(res.getStatus()).to.equal(200); });
+  test("source_format is binary_eye_v1", function() {
+    expect(res.getBody().source_format).to.equal("binary_eye_v1");
+  });
+  test("source_format_label is human-readable", function() {
+    expect(res.getBody().source_format_label).to.equal("Binary Eye export");
+  });
+  test("8 valid SNs extracted", function() {
+    expect(res.getBody().total_parsed).to.equal(8);
+  });
+  test("0 errors reported", function() {
+    expect(res.getBody().errors.length).to.equal(0);
+  });
+  test("0 duplicates removed (all 8 are unique within file)", function() {
+    expect(res.getBody().duplicates_removed).to.equal(0);
+  });
+  test("first SN matches Binary Eye export", function() {
+    expect(res.getBody().rows[0].serial_number).to.equal("0K2TEST0000011");
+  });
+}
+
+docs {
+  Regression test for Binary Eye CSV import.
+
+  Before this PR, Binary Eye exports produced "Found 0 serial numbers"
+  because the legacy DJI scanner branch required a SN:XXX SSID:YYY
+  Password:ZZZ content cell, which Binary Eye does not produce.
+
+  This test confirms a fixture modelled on a real Binary Eye export
+  is auto-detected and parsed end-to-end through /fleet/batch-import.
+}

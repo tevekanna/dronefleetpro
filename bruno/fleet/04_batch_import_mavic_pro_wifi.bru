@@ -1,0 +1,47 @@
+meta {
+  name: 04 Batch import — Mavic Pro WiFi-format QR (Binary Eye)
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{base_url}}/api/v1/fleet/batch-import
+  body: multipartForm
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+body:multipart-form {
+  entity_type: aircraft
+  file: @file(../backend/tests/fixtures/qr_csv/99uav-mavicpro.csv)
+}
+
+tests {
+  test("status is 200", function() { expect(res.getStatus()).to.equal(200); });
+  test("source_format is binary_eye_v1", function() {
+    expect(res.getBody().source_format).to.equal("binary_eye_v1");
+  });
+  test("WiFi-format SN is unwrapped to 1 valid row", function() {
+    expect(res.getBody().total_parsed).to.equal(1);
+  });
+  test("0 errors", function() {
+    expect(res.getBody().errors.length).to.equal(0);
+  });
+  test("the SN matches the wrapped value", function() {
+    expect(res.getBody().rows[0].serial_number).to.equal("08QTEST0000004");
+  });
+}
+
+docs {
+  Follow-up regression test for the Mavic Pro / Tello WiFi-format QR
+  bug. These drones encode SN:XXX SSID:YYY Password:ZZZ on a single QR
+  sticker that doubles as the SN label. Binary Eye writes the whole
+  string into `content` verbatim. Before the fix in
+  fix/binary-eye-mavic-pro-wifi-format, the validator rejected the
+  whole content string as "contains whitespace" and the operator saw
+  "Found 0 serial numbers". Fix unwraps the WiFi format inside the
+  Binary Eye branch by reusing the existing DJI Mimo regex.
+}

@@ -1,0 +1,21 @@
+meta {
+  name: 90 Cleanup — delete first test incident
+  type: http
+  seq: 90
+}
+
+delete {
+  url: {{base_url}}/api/v1/incidents/{{rbac_incident_id}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{admin_token}}
+}
+
+tests {
+  test("status is 200 or 404", function() {
+    expect([200, 404]).to.include(res.getStatus());
+  });
+}

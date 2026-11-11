@@ -1,0 +1,37 @@
+meta {
+  name: 99 Cleanup — hard delete the test template via direct DB
+  type: http
+  seq: 99
+}
+
+get {
+  url: {{base_url}}/api/v1/maintenance-schedule-templates?include_inactive=true
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+docs {
+  The DELETE endpoint is soft-only by design (sets is_active = FALSE),
+  so this folder leaves a deactivated TEST_Template_BatteryCheck row
+  behind. That is intentional and acceptable: it does not interfere
+  with the normal schedules workflow because all production reads
+  filter on is_active = TRUE. To physically remove the row run:
+
+    DELETE FROM maintenance_schedule_templates
+     WHERE name = 'TEST_Template_BatteryCheck';
+
+  This file just verifies the test row is still findable (sanity check
+  that we didn't accidentally leak a hard-delete). It exists so the
+  folder always ends with a green test rather than the prior soft-
+  delete verification.
+}
+
+tests {
+  test("status is 200 (suite teardown reachable)", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+}

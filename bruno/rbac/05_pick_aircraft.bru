@@ -1,0 +1,30 @@
+meta {
+  name: 05 Pick first available aircraft (seeds rbac_aircraft_id)
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{base_url}}/api/v1/aircraft?include_retired=false
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{admin_token}}
+}
+
+script:post-response {
+  if (res.getStatus() === 200 && Array.isArray(res.getBody()) && res.getBody().length > 0) {
+    bru.setEnvVar("rbac_aircraft_id", res.getBody()[0].id);
+  }
+}
+
+tests {
+  test("status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("rbac_aircraft_id stored", function() {
+    expect(bru.getEnvVar("rbac_aircraft_id")).to.match(/^\d+$/);
+  });
+}

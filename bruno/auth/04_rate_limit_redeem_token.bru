@@ -1,0 +1,58 @@
+meta {
+  name: 04 redeem-token limiter — 11th bogus attempt for the same identifier is 429
+  type: http
+  seq: 4
+}
+
+script:pre-request {
+  // Identifier is sha256(token), so 10 attempts with the SAME bogus token
+  // drive the counter for that identifier to threshold. Per-run random
+  // token so prior runs don't preload.
+  const axios = require('axios');
+  const baseUrl = bru.getEnvVar('base_url');
+  const stamp = `${Date.now()}-${Math.floor(Math.random() * 1e6)}`;
+  const bogus = `bruno-bogus-${stamp}-padpadpadpadpadpadpadpadpadpadpa`;
+  bru.setEnvVar("rl_bogus_token", bogus);
+
+  async function callStatus() {
+    try {
+      const r = await axios.post(`${baseUrl}/api/v1/auth/redeem-token`,
+        { token: bogus, new_password: 'replacement-password-12345' });
+      return r.status;
+    } catch (e) {
+      if (e.response) return e.response.status;
+      throw e;
+    }
+  }
+
+  for (let i = 0; i < 10; i++) {
+    const s = await callStatus();
+    if (s !== 400) {
+      throw new Error(`redeem attempt ${i + 1}: expected 400, got ${s}`);
+    }
+  }
+}
+
+post {
+  url: {{base_url}}/api/v1/auth/redeem-token
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "token": "{{rl_bogus_token}}",
+    "new_password": "replacement-password-12345"
+  }
+}
+
+tests {
+  test("11th redeem attempt is 429", function() {
+    expect(res.getStatus()).to.equal(429);
+  });
+  test("body has retry_after_seconds", function() {
+    const body = res.getBody();
+    expect(body).to.have.property('retry_after_seconds');
+    expect(body.retry_after_seconds).to.be.a('number').and.to.be.above(0);
+  });
+}

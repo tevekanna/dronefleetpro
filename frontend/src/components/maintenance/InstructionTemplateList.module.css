@@ -1,0 +1,181 @@
+/* SPDX-License-Identifier: AGPL-3.0-only */
+/* Copyright (C) 2026 Lars Wallström */
+
+/* Shared row + expandable checklist detail for inspection templates.
+   Consumed by both InstructionTemplatesPage and the aircraft workspace
+   "Model & checklists" tab. Extracted from InstructionTemplatesPage.module.css
+   so the two surfaces render identically. */
+
+.templateRow {
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.templateRow:hover {
+  border-color: var(--color-border-strong);
+}
+
+.templateRow.expanded {
+  border-color: var(--color-accent);
+}
+
+.templateName {
+  font-weight: 600;
+  color: var(--color-text-primary);
+  flex: 1;
+}
+
+.badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 99px;
+  line-height: 1.6;
+}
+
+.badgeManufacturer {
+  background: rgba(14, 165, 233, 0.12);
+  color: var(--color-accent);
+}
+
+.badgeCustom {
+  background: var(--color-bg-elevated);
+  color: var(--color-text-muted);
+}
+
+.meta {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.chevron {
+  transition: transform 0.2s;
+  color: var(--color-text-muted);
+}
+
+.chevronOpen {
+  transform: rotate(90deg);
+}
+
+.editBtn {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.editBtn:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.deactivateBtn {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-critical);
+  cursor: pointer;
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.deactivateBtn:hover {
+  border-color: var(--color-critical);
+}
+
+.detail {
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-top: none;
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  padding: var(--space-4) var(--space-5);
+  margin-top: -1px;
+}
+
+.sectionTitle {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-secondary);
+  margin-top: var(--space-4);
+  margin-bottom: var(--space-2);
+}
+
+.detail > div:first-child .sectionTitle {
+  margin-top: 0;
+}
+
+.itemRow {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.itemRow:last-child {
+  border-bottom: none;
+}
+
+.itemNumber {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  min-width: 24px;
+  padding-top: 2px;
+}
+
+.itemBody {
+  flex: 1;
+}
+
+.itemText {
+  color: var(--color-text-primary);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.itemRef {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+.itemBadge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 99px;
+}
+
+.badgeRequired {
+  background: rgba(34, 197, 94, 0.12);
+  color: var(--color-ok);
+}
+
+.badgeOptional {
+  background: var(--color-bg-elevated);
+  color: var(--color-text-muted);
+}
+
+.loadingDetail {
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  padding: var(--space-3) 0;
+}

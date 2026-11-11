@@ -1,0 +1,31 @@
+meta {
+  name: 14 Admin issues a password-reset token
+  type: http
+  seq: 14
+}
+
+post {
+  url: {{base_url}}/api/v1/users/{{created_user_id}}/reset-token
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+script:post-response {
+  if (res.getStatus() === 200 && res.getBody().token) {
+    bru.setEnvVar("reset_token", res.getBody().token);
+  }
+}
+
+tests {
+  test("status is 200", function() { expect(res.getStatus()).to.equal(200); });
+  test("plaintext token returned (43 chars)", function() {
+    expect(res.getBody().token).to.be.a('string').with.lengthOf(43);
+  });
+  test("expires_at present", function() {
+    expect(res.getBody().expires_at).to.match(/\d{4}-\d{2}-\d{2}T/);
+  });
+}

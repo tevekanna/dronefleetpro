@@ -1,0 +1,30 @@
+meta {
+  name: 10 Validation — Empty Name
+  type: http
+  seq: 10
+}
+
+post {
+  url: {{base_url}}/api/v1/maintenance-schedules
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+body:json {
+  {
+    "aircraft_id": {{aircraft_id}},
+    "name": "",
+    "interval_type": "flight_hours",
+    "interval_value": 25
+  }
+}
+
+tests {
+  test("status is 400", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+}

@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/tevekanna/dronefleetpro/blob/main/SECURITY.md
+    about: Do not open a public issue for a vulnerability. Follow the private reporting process in SECURITY.md.
+  - name: Commercial licence
+    url: https://github.com/tevekanna/dronefleetpro/blob/main/COMMERCIAL-LICENCE.md
+    about: Questions about using DroneFleetPro outside the terms of the AGPL.

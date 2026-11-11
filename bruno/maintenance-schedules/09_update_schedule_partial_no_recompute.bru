@@ -1,0 +1,33 @@
+meta {
+  name: 09 Update Schedule Partial (no recompute)
+  type: http
+  seq: 9
+}
+
+put {
+  url: {{base_url}}/api/v1/maintenance-schedules/{{schedule_id}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+body:json {
+  {
+    "description": "Updated description"
+  }
+}
+
+tests {
+  test("status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("description updated", function() {
+    expect(res.getBody().description).to.equal("Updated description");
+  });
+  test("next_due_flight_hours still == 60 (not recomputed)", function() {
+    expect(res.getBody().next_due_flight_hours).to.equal(60);
+  });
+}

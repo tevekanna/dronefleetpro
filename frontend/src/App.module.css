@@ -1,0 +1,251 @@
+/* SPDX-License-Identifier: AGPL-3.0-only */
+/* Copyright (C) 2026 Lars Wallström */
+
+.shell {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+
+.sidebar {
+  width: 220px;
+  height: 100vh;
+  background: var(--color-bg-surface);
+  border-right: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-4);
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-accent);
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.orgLogoWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4) var(--space-4) var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.orgLogoLight,
+.orgLogoDark {
+  max-width: 100%;
+  max-height: 44px;
+  object-fit: contain;
+}
+
+.orgLogoLight {
+  display: none;
+}
+
+.orgLogoDark {
+  display: block;
+}
+
+:global([data-theme="light"]) .orgLogoWrap {
+  border-bottom-color: #e2e8f0;
+}
+
+:global([data-theme="light"]) .orgLogoDark {
+  display: none;
+}
+
+:global([data-theme="light"]) .orgLogoLight {
+  display: block;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-2) 0 var(--space-3);
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.navSection {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: var(--space-4);
+}
+
+.navSection:first-child {
+  margin-top: var(--space-1);
+}
+
+.navSectionHeader {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+  margin: 0;
+  padding: var(--space-2) var(--space-4) var(--space-1);
+  font-family: var(--font-label);
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  transition: background 0.15s ease, color 0.15s ease;
+  text-decoration: none;
+}
+
+.navLink:hover {
+  background: var(--color-bg-elevated);
+  color: var(--color-text-primary);
+}
+
+.navLinkActive {
+  color: var(--color-accent);
+  background: var(--color-accent-glow);
+  border-right: 2px solid var(--color-accent);
+}
+
+.sidebarFooter {
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.logoutButton {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  background: transparent;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-size: 0.875rem;
+  padding: var(--space-2) 0;
+  width: 100%;
+  font-family: var(--font-body);
+}
+
+.logoutButton:hover {
+  color: var(--color-text-primary);
+}
+
+.sidebarSource {
+  padding-top: var(--space-1);
+}
+
+.main {
+  flex: 1;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-5);
+  background: var(--color-bg-surface);
+  border-bottom: 1px solid var(--color-border);
+  height: 48px;
+  flex-shrink: 0;
+}
+
+.topBarLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.topBarRight {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.orgName {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  letter-spacing: 0.04em;
+}
+
+.topBarSeparator {
+  display: inline-block;
+  width: 1px;
+  height: 16px;
+  background: var(--color-border);
+}
+
+.userMenu {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  background: var(--color-bg-elevated);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+}
+
+.content {
+  flex: 1;
+  padding: var(--space-5);
+  overflow-y: auto;
+  min-height: 0;
+}
+
+/* Light sidebar in light mode */
+:global([data-theme="light"]) .sidebar {
+  background: #f8fafc;
+  border-right-color: #e2e8f0;
+}
+
+:global([data-theme="light"]) .logo {
+  color: #0369a1;
+  border-bottom-color: #e2e8f0;
+}
+
+:global([data-theme="light"]) .navLink {
+  color: #475569;
+}
+
+:global([data-theme="light"]) .navLink:hover {
+  background: rgba(0,0,0,0.04);
+  color: #0f172a;
+}
+
+:global([data-theme="light"]) .navLinkActive {
+  color: #0ea5e9;
+  background: rgba(14, 165, 233, 0.08);
+  border-right-color: #0ea5e9;
+}
+
+:global([data-theme="light"]) .sidebarFooter {
+  border-top-color: #e2e8f0;
+}
+
+:global([data-theme="light"]) .logoutButton {
+  color: #475569;
+}
+
+:global([data-theme="light"]) .logoutButton:hover {
+  color: #0f172a;
+}

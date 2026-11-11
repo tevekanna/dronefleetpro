@@ -1,0 +1,37 @@
+meta {
+  name: 01 Rate-limit warmup 1 (must be allowed past limiter)
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{base_url}}/api/v1/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "rl-test@dronefleetpro.local",
+    "password": "wrong-password-on-purpose"
+  }
+}
+
+tests {
+  // Warmup 1: assumes a fresh limiter bucket and the production-strict
+  // rate-limit settings. The dev compose normally relaxes the limit
+  // (burst=100) so the rest of the test suites can run; to verify rate
+  // limiting works, restart the backend with the production defaults:
+  //
+  //   docker compose -f docker-compose.dev.yml stop backend
+  //   docker run --rm -e RATE_LIMIT_AUTH_PER_SECONDS=12 \
+  //     -e RATE_LIMIT_AUTH_BURST=6 ...
+  //
+  // Or simpler: `unset` the env in docker-compose.dev.yml and recreate.
+  //
+  // If this returns 429 on a fresh start, the bucket carried over from a
+  // prior run — restart the backend and rerun.
+  test("status is 401 (bad creds, allowed past limiter)", function() {
+    expect(res.getStatus()).to.equal(401);
+  });
+}

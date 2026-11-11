@@ -1,0 +1,41 @@
+meta {
+  name: 13 Pilot can view another pilot's flight detail
+  type: http
+  seq: 13
+}
+
+get {
+  url: {{base_url}}/api/v1/flights/{{pilot_other_flight_id}}/detail
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{pilot_token}}
+}
+
+docs {
+  Companion to test 10. Under B2, pilots can open the detail view of any
+  flight in their org — not just their own. Test 10 captures
+  `pilot_other_flight_id` (a flight whose `pilot_id` differs from the
+  requester's) into env. If that env var is unset (e.g. the seed dataset
+  only has one pilot's flights), this test is skipped.
+}
+
+tests {
+  test("env var pilot_other_flight_id is set by test 10", function() {
+    var fid = bru.getEnvVar("pilot_other_flight_id");
+    expect(fid, "test 10 should set pilot_other_flight_id — re-seed if not set").to.match(/^\d+$/);
+  });
+  test("status is 200 (no longer 403)", function() {
+    if (!/^\d+$/.test(bru.getEnvVar("pilot_other_flight_id"))) return;
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("returned flight is not the requester's own", function() {
+    if (!/^\d+$/.test(bru.getEnvVar("pilot_other_flight_id")) || res.getStatus() !== 200) return;
+    var ownPid = parseInt(bru.getEnvVar("pilot_pilot_id"), 10);
+    var body = res.getBody();
+    expect(body).to.have.property("flight");
+    expect(body.flight.pilot_id, "this test only makes sense when the target flight belongs to another pilot").to.not.equal(ownPid);
+  });
+}

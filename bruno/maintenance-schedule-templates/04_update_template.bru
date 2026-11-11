@@ -1,0 +1,33 @@
+meta {
+  name: 04 Update Template (admin)
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{base_url}}/api/v1/maintenance-schedule-templates/{{test_template_id}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+body:json {
+  {
+    "interval_value": 60,
+    "warning_threshold": 0.9,
+    "is_critical": true
+  }
+}
+
+tests {
+  test("status is 200", function() { expect(res.getStatus()).to.equal(200); });
+  test("interval_value updated", function() { expect(res.getBody().interval_value).to.equal(60); });
+  test("warning_threshold updated", function() { expect(res.getBody().warning_threshold).to.equal(0.9); });
+  test("is_critical updated", function() { expect(res.getBody().is_critical).to.equal(true); });
+  test("name preserved (PUT was partial)", function() {
+    expect(res.getBody().name).to.equal("TEST_Template_BatteryCheck");
+  });
+}

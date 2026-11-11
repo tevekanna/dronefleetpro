@@ -1,0 +1,39 @@
+meta {
+  name: 30 Admin creates incident (seeds rbac_incident_id)
+  type: http
+  seq: 30
+}
+
+post {
+  url: {{base_url}}/api/v1/incidents
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{admin_token}}
+}
+
+body:json {
+  {
+    "occurred_at": "2026-04-15T14:30:00Z",
+    "severity": "low",
+    "category": "RBAC test",
+    "description": "RBAC suite test incident — safe to delete"
+  }
+}
+
+script:post-response {
+  if (res.getStatus() === 200 && res.getBody() && res.getBody().id) {
+    bru.setEnvVar("rbac_incident_id", res.getBody().id);
+  }
+}
+
+tests {
+  test("status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("incident_id stored", function() {
+    expect(bru.getEnvVar("rbac_incident_id")).to.match(/^\d+$/);
+  });
+}

@@ -1,0 +1,33 @@
+meta {
+  name: 07 Login rate limit resets after the cooldown
+  type: http
+  seq: 7
+  skipBy: time
+}
+
+post {
+  url: {{base_url}}/api/v1/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "rl-test-reset@dronefleetpro.local",
+    "password": "wrong-password-on-purpose"
+  }
+}
+
+script:pre-request {
+  // Wait long enough for the per-IP token bucket to fully recover from
+  // the saturating burst in tests 01-06. tower_governor's leaky-bucket
+  // accounting requires `burst_size * per_second_period = 6 * 12 = 72 s`
+  // to repay the full debt; we sleep 80 s for a comfortable margin.
+  await new Promise((resolve) => setTimeout(resolve, 80000));
+}
+
+tests {
+  test("status is 401 (allowed past the limiter, fails on bad creds)", function() {
+    expect(res.getStatus()).to.equal(401);
+  });
+}

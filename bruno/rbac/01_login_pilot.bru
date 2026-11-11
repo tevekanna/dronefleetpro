@@ -1,0 +1,40 @@
+meta {
+  name: 01 Login pilot (seeds pilot_token)
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{base_url}}/api/v1/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "audit-test-pilot@dronefleetpro.local",
+    "password": "dronefleet2025"
+  }
+}
+
+docs {
+  Depends on the ATP fixture being linked to a pilot record. Run
+  bruno/rbac/fixtures.sql once to seed.
+}
+
+script:post-response {
+  if (res.getStatus() === 200 && res.getBody() && res.getBody().token) {
+    bru.setEnvVar("pilot_token", res.getBody().token);
+    bru.setEnvVar("pilot_user_id", res.getBody().user.id);
+    bru.setEnvVar("pilot_pilot_id", res.getBody().user.pilot_id || 0);
+  }
+}
+
+tests {
+  test("status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("pilot_token stored", function() {
+    expect(bru.getEnvVar("pilot_token")).to.be.a('string').and.not.empty;
+  });
+}

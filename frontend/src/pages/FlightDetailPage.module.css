@@ -1,0 +1,457 @@
+/* SPDX-License-Identifier: AGPL-3.0-only */
+/* Copyright (C) 2026 Lars Wallström */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.section {
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-5);
+}
+
+.sectionHeading {
+  font-family: var(--font-label);
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-4);
+}
+
+.headerCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.headerTopRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.flightTitle {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  letter-spacing: 0.02em;
+}
+
+.flightSubtitle {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  margin-top: var(--space-1);
+}
+
+.metaGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-3) var(--space-5);
+}
+
+.metaItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.metaLabel {
+  font-family: var(--font-label);
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.metaValue {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  color: var(--color-text-primary);
+  word-break: break-word;
+}
+
+.metaLink {
+  color: var(--color-accent);
+  text-decoration: none;
+}
+
+.metaLink:hover {
+  text-decoration: underline;
+}
+
+.equipmentLine {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.equipmentSecondary {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.sourceBadge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+}
+
+.sourceBadgeDji {
+  background: var(--color-accent-glow);
+  color: var(--color-accent);
+  border: 1px solid var(--color-accent-dim);
+}
+
+.sourceBadgeLitchi {
+  background: rgba(99, 102, 241, 0.12);
+  color: var(--color-info);
+  border: 1px solid rgba(99, 102, 241, 0.35);
+}
+
+.sourceBadgeManual {
+  background: rgba(138, 155, 176, 0.12);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border-strong);
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--space-3);
+}
+
+.statCard {
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+}
+
+.statValue {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-1);
+}
+
+.statLabel {
+  font-family: var(--font-label);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+}
+
+.mapWrapper {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+}
+
+.mapEmpty {
+  height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-base);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-muted);
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+}
+
+.sparkline {
+  margin-top: var(--space-3);
+  background: var(--color-bg-base);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3);
+}
+
+.sparklineLabel {
+  font-family: var(--font-label);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-2);
+}
+
+.detailRowList {
+  display: flex;
+  flex-direction: column;
+}
+
+.detailRow {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 0.85rem;
+}
+
+.detailRow:last-child {
+  border-bottom: none;
+}
+
+.detailLabel {
+  color: var(--color-text-secondary);
+  flex-shrink: 0;
+}
+
+.detailValue {
+  color: var(--color-text-primary);
+  font-family: var(--font-display);
+  text-align: right;
+  word-break: break-word;
+}
+
+.detailMuted {
+  color: var(--color-text-muted);
+}
+
+.preflightOk {
+  color: var(--color-ok);
+}
+
+.preflightMissing {
+  color: var(--color-critical);
+}
+
+.remarksBlock {
+  background: var(--color-bg-base);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3);
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  white-space: pre-wrap;
+  margin-top: var(--space-3);
+}
+
+.scheduleList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.scheduleRow {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1.2fr) auto;
+  gap: var(--space-3);
+  align-items: center;
+  padding: var(--space-3);
+  background: var(--color-bg-base);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.1s ease;
+  color: inherit;
+  text-decoration: none;
+}
+
+.scheduleRow:hover {
+  background: var(--color-bg-elevated);
+}
+
+.scheduleName {
+  font-family: var(--font-display);
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.scheduleStatus {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.statusOk {
+  background: rgba(34, 197, 94, 0.12);
+  color: var(--color-ok);
+  border: 1px solid rgba(34, 197, 94, 0.35);
+}
+
+.statusWarning {
+  background: rgba(245, 158, 11, 0.12);
+  color: var(--color-warning);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.statusOverdue {
+  background: rgba(239, 68, 68, 0.12);
+  color: var(--color-critical);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+}
+
+.scheduleConsumption {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+}
+
+.scheduleArrow {
+  color: var(--color-text-muted);
+}
+
+.errorBox {
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  color: var(--color-critical);
+  font-size: 0.9rem;
+}
+
+.skeleton {
+  background: var(--color-bg-elevated);
+  border-radius: var(--radius-sm);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+.skeletonHeader {
+  height: 100px;
+}
+
+.skeletonStatsRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--space-3);
+}
+
+.skeletonStat {
+  height: 80px;
+}
+
+.skeletonMap {
+  height: 400px;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1.0; }
+}
+
+@media (max-width: 700px) {
+  .scheduleRow {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto;
+  }
+  .scheduleStatus { grid-row: 1; grid-column: 2; }
+  .scheduleConsumption { grid-row: 2; grid-column: 1 / -1; }
+  .scheduleArrow { display: none; }
+}
+
+.remarksHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.remarksEditBtn {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  color: var(--color-accent);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.remarksEditBtn:hover {
+  text-decoration: underline;
+}
+
+.remarksEmpty {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.remarksEditor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.remarksTextarea {
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--color-bg-base);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--color-text-primary);
+  resize: vertical;
+}
+
+.remarksTextarea:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+.remarksActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+.remarksSaveBtn {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-sm);
+  background: var(--color-accent);
+  color: var(--color-text-inverse);
+  border: 1px solid var(--color-accent);
+  cursor: pointer;
+}
+
+.remarksSaveBtn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.remarksCancelBtn {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border-strong);
+  cursor: pointer;
+}
+
+.remarksCancelBtn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}

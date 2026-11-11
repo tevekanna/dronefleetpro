@@ -1,0 +1,258 @@
+/* SPDX-License-Identifier: AGPL-3.0-only */
+/* Copyright (C) 2026 Lars Wallström */
+
+.page { display: flex; flex-direction: column; gap: var(--space-5); }
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  letter-spacing: 0.02em;
+  margin: 0;
+}
+
+.filters {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+  margin-left: auto;
+}
+
+.select {
+  background: var(--color-bg-input);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-1) var(--space-2);
+  color: var(--color-text-primary);
+  font-size: 0.82rem;
+  font-family: var(--font-body);
+  min-width: 140px;
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: 0.82rem;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  user-select: none;
+}
+
+.banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  font-size: 0.88rem;
+  font-family: var(--font-body);
+}
+
+.bannerOverdue {
+  background: color-mix(in srgb, var(--color-critical) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-critical) 45%, transparent);
+  color: var(--color-text-primary);
+}
+
+.bannerWarning {
+  background: color-mix(in srgb, var(--color-warning) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-warning) 40%, transparent);
+  color: var(--color-text-primary);
+}
+
+.bannerIcon { flex-shrink: 0; }
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-10) var(--space-5);
+  background: var(--color-bg-surface);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  gap: var(--space-2);
+}
+
+.emptyTitle {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+}
+
+.emptyHint {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  text-align: center;
+  max-width: 480px;
+}
+
+.seedButton {
+  margin-top: var(--space-3);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  background: var(--color-accent);
+  color: var(--color-text-inverse);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-4);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.seedButton:hover:not(:disabled) {
+  background: var(--color-accent-dim);
+}
+
+.seedButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.errorMsg { color: var(--color-critical); font-size: 0.88rem; }
+.loadingMsg { color: var(--color-text-secondary); font-size: 0.88rem; }
+
+.skeletonRow {
+  height: 46px;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--space-2);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 0.3; }
+}
+
+.groups { display: flex; flex-direction: column; gap: var(--space-5); }
+
+/* "Aircraft without schedules" section */
+.unseededSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.unseededHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.unseededTitle {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.unseededCount {
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 1px 8px;
+  line-height: 1.4;
+}
+
+.unseededBulk {
+  margin-left: auto;
+  background: transparent;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  padding: var(--space-1) var(--space-3);
+  font-size: 0.78rem;
+  font-family: var(--font-body);
+  cursor: pointer;
+}
+
+.unseededBulk:hover {
+  color: var(--color-text-primary);
+  border-color: var(--color-accent);
+}
+
+.unseededIntro {
+  margin: 0 0 var(--space-2);
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  max-width: 640px;
+}
+
+.unseededList {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: var(--color-border);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.unseededRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-bg-base);
+  font-size: 0.85rem;
+}
+
+.unseededLabel {
+  font-family: var(--font-display);
+  color: var(--color-text-primary);
+}
+
+.unseededHint {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  color: var(--color-warning);
+}
+
+.spacer { flex: 1; }
+
+.unseededAction {
+  background: var(--color-accent);
+  color: var(--color-text-inverse);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 4px 12px;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.unseededAction:hover:not(:disabled) {
+  background: var(--color-accent-dim);
+}
+
+.unseededAction:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

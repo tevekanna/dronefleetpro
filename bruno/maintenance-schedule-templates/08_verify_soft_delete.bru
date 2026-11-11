@@ -1,0 +1,25 @@
+meta {
+  name: 08 Verify soft-delete: list with include_inactive=true and find row
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{base_url}}/api/v1/maintenance-schedule-templates?include_inactive=true
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+tests {
+  test("status is 200", function() { expect(res.getStatus()).to.equal(200); });
+  test("template still exists with is_active=false", function() {
+    const tid = parseInt(bru.getEnvVar("test_template_id"), 10);
+    const found = res.getBody().find(t => t.id === tid);
+    expect(found, `template ${tid} should still exist after soft delete`).to.not.equal(undefined);
+    expect(found.is_active).to.equal(false);
+  });
+}

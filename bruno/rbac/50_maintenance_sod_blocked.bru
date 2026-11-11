@@ -1,0 +1,39 @@
+meta {
+  name: 50 Maintenance SoD blocks created_by == sign_off
+  type: http
+  seq: 50
+}
+
+post {
+  url: {{base_url}}/api/v1/maintenance
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{tech_token}}
+}
+
+body:json {
+  {
+    "aircraft_id": {{rbac_aircraft_id}},
+    "performed_date": "2026-04-20",
+    "created_by": "RTE",
+    "remark": "RBAC test — SoD violation",
+    "action_taken": "Should not insert",
+    "maint_category": "Scheduled",
+    "maint_type": "Test",
+    "sign_off": "RTE"
+  }
+}
+
+tests {
+  test("status is 400", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+  test("error mentions separation of duties", function() {
+    var body = res.getBody();
+    var msg = (body.error || body.message || JSON.stringify(body)).toLowerCase();
+    expect(msg).to.match(/separation of duties|created_by|sign_off/);
+  });
+}

@@ -1,0 +1,105 @@
+/* SPDX-License-Identifier: AGPL-3.0-only */
+/* Copyright (C) 2026 Lars Wallström */
+
+.accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.groupHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-bg-surface);
+  border-bottom: 1px solid var(--color-border);
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s;
+}
+
+.groupHeader:hover {
+  background: var(--color-bg-elevated);
+}
+
+.chevron {
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.chevronOpen {
+  transform: rotate(90deg);
+}
+
+.groupLabel {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.countPill {
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 1px 8px;
+  line-height: 1.4;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.retiredToggle {
+  font-family: var(--font-label);
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  white-space: nowrap;
+  margin-right: var(--space-3);
+}
+
+.retiredToggle:hover {
+  color: var(--color-text-secondary);
+}
+
+.retiredToggleActive {
+  font-family: var(--font-label);
+  font-size: 0.78rem;
+  color: var(--color-warning);
+  cursor: pointer;
+  white-space: nowrap;
+  margin-right: var(--space-3);
+}
+
+.retiredToggleActive:hover {
+  opacity: 0.8;
+}
+
+.statusSummary {
+  font-family: var(--font-label);
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.groupContent {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.3s ease-in-out;
+}
+
+.groupContentOpen {
+  max-height: 9999px;
+}
+
+.groupContentInner {
+  border-left: 2px solid var(--color-border);
+  background: var(--color-bg-base);
+}

@@ -1,0 +1,39 @@
+meta {
+  name: 02 List users — include_inactive returns deactivated users too
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{base_url}}/api/v1/users?include_inactive=true
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+docs {
+  Org 1 has at least one previously deactivated user (smoke-test or similar
+  legacy data). The include_inactive list should be a strict superset of the
+  active-only list.
+}
+
+tests {
+  test("status is 200", function() { expect(res.getStatus()).to.equal(200); });
+  test("at least one inactive user surfaces (or list is non-empty)", function() {
+    const all = res.getBody();
+    expect(all).to.be.an('array').with.length.greaterThan(0);
+  });
+  test("active users come before inactive users", function() {
+    const all = res.getBody();
+    let seenInactive = false;
+    for (const u of all) {
+      if (!u.is_active) seenInactive = true;
+      else if (seenInactive) {
+        throw new Error('active user found after inactive user — order is wrong');
+      }
+    }
+  });
+}

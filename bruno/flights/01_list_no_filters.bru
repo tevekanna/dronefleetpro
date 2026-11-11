@@ -1,0 +1,49 @@
+meta {
+  name: 01 List flights — baseline (no filters)
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{base_url}}/api/v1/flights?per_page=10
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+script:post-response {
+  if (res.getStatus() === 200) {
+    const body = res.getBody();
+    bru.setEnvVar("flights_total_unfiltered", String(body.total));
+    if (body.flights.length > 0) {
+      const f = body.flights[0];
+      if (f.aircraft_id) bru.setEnvVar("flights_pivot_aircraft_id", String(f.aircraft_id));
+      if (f.pilot_id) bru.setEnvVar("flights_pivot_pilot_id", String(f.pilot_id));
+      if (f.mission_type) bru.setEnvVar("flights_pivot_mission_type", f.mission_type);
+      if (f.easa_category) bru.setEnvVar("flights_pivot_easa_category", f.easa_category);
+      if (f.flight_datetime) bru.setEnvVar("flights_pivot_date", f.flight_datetime.substring(0, 10));
+    }
+  }
+}
+
+tests {
+  test("status is 200", function() { expect(res.getStatus()).to.equal(200); });
+  test("response has paginated shape", function() {
+    const b = res.getBody();
+    expect(b).to.have.property('flights').that.is.an('array');
+    expect(b).to.have.property('total').that.is.a('number');
+    expect(b).to.have.property('page').that.is.a('number');
+    expect(b).to.have.property('per_page').that.is.a('number');
+    expect(b).to.have.property('total_pages').that.is.a('number');
+  });
+  test("returned items have flight fields", function() {
+    if (res.getBody().flights.length > 0) {
+      const f = res.getBody().flights[0];
+      ['id', 'org_id', 'flight_datetime', 'duration_seconds'].forEach(k =>
+        expect(f).to.have.property(k));
+    }
+  });
+}

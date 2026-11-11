@@ -1,0 +1,33 @@
+meta {
+  name: 08 Update Schedule Recomputes next_due
+  type: http
+  seq: 8
+}
+
+put {
+  url: {{base_url}}/api/v1/maintenance-schedules/{{schedule_id}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+body:json {
+  {
+    "interval_value": 50
+  }
+}
+
+tests {
+  test("status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("next_due_flight_hours == 60 (10 + 50, recomputed)", function() {
+    expect(res.getBody().next_due_flight_hours).to.equal(60);
+  });
+  test("name unchanged", function() {
+    expect(res.getBody().name).to.equal("Propeller inspection");
+  });
+}

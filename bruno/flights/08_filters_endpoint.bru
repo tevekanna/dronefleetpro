@@ -1,0 +1,36 @@
+meta {
+  name: 08 /flights/filters returns distinct value arrays
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{base_url}}/api/v1/flights/filters
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+tests {
+  test("status is 200", function() { expect(res.getStatus()).to.equal(200); });
+  test("response shape", function() {
+    const b = res.getBody();
+    expect(b).to.have.property('mission_types').that.is.an('array');
+    expect(b).to.have.property('easa_categories').that.is.an('array');
+  });
+  test("mission_types is sorted and deduplicated", function() {
+    const a = res.getBody().mission_types;
+    const sorted = [...a].sort();
+    expect(a).to.deep.equal(sorted);
+    expect(new Set(a).size).to.equal(a.length);
+  });
+  test("easa_categories is sorted and deduplicated", function() {
+    const a = res.getBody().easa_categories;
+    const sorted = [...a].sort();
+    expect(a).to.deep.equal(sorted);
+    expect(new Set(a).size).to.equal(a.length);
+  });
+}

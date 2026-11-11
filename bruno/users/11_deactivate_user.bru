@@ -1,0 +1,22 @@
+meta {
+  name: 11 Deactivate a non-admin user (created in test 03)
+  type: http
+  seq: 11
+}
+
+delete {
+  url: {{base_url}}/api/v1/users/{{created_user_id}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+tests {
+  test("status is 200", function() { expect(res.getStatus()).to.equal(200); });
+  test("response confirms deactivation", function() {
+    expect(res.getBody()).to.have.property('message').that.contains('deactivated');
+  });
+}

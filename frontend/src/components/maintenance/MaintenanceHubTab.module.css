@@ -1,0 +1,491 @@
+/* SPDX-License-Identifier: AGPL-3.0-only */
+/* Copyright (C) 2026 Lars Wallström */
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+/* ── Stat row ───────────────────────────────────────────────────────────── */
+.statRow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-4);
+}
+
+.statCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-4);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-top-width: 3px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+  appearance: none;
+  width: 100%;
+}
+
+.statCard:hover { border-color: var(--color-border-strong); }
+.statCardActive { outline: 2px solid var(--color-accent); outline-offset: -1px; }
+
+.statTop_accent   { border-top-color: var(--color-accent); }
+.statTop_critical { border-top-color: var(--color-critical); }
+.statTop_warning  { border-top-color: var(--color-warning); }
+.statTop_info     { border-top-color: var(--color-info); }
+.statTop_ok       { border-top-color: var(--color-ok); }
+
+.statValue {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  line-height: 1.1;
+}
+
+.statValue_accent   { color: var(--color-accent); }
+.statValue_critical { color: var(--color-critical); }
+.statValue_warning  { color: var(--color-warning); }
+.statValue_info     { color: var(--color-info); }
+.statValue_ok       { color: var(--color-ok); }
+
+.statLabel {
+  font-size: 0.72rem;
+  font-family: var(--font-label);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+}
+
+/* ── Panels ─────────────────────────────────────────────────────────────── */
+.panel {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+.panelHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.panelTitle {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.countBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 var(--space-2);
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.countCritical {
+  background: var(--color-critical);
+  color: #fff;
+}
+
+.countWarning {
+  background: var(--color-warning);
+  color: var(--color-text-inverse);
+}
+
+/* ── Three-column grid ──────────────────────────────────────────────────── */
+.grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: var(--space-5);
+  align-items: start;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+/* ── Alerts ─────────────────────────────────────────────────────────────── */
+.alertList,
+.rowList {
+  display: flex;
+  flex-direction: column;
+}
+
+.alertRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  font-size: 0.82rem;
+}
+
+.alertRow:last-child {
+  border-bottom: none;
+}
+
+.dot {
+  flex-shrink: 0;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+
+.dotCritical {
+  background: var(--color-critical);
+  box-shadow: 0 0 6px 1px rgba(239, 68, 68, 0.5);
+}
+
+.dotWarning {
+  background: var(--color-warning);
+}
+
+.alertName {
+  flex: 1;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.alertSub {
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+}
+
+.amount {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.amountCritical {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-critical);
+  white-space: nowrap;
+}
+
+/* ── Badges ─────────────────────────────────────────────────────────────── */
+.badge {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-label);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.badgeCritical {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--color-critical);
+}
+
+.badgeWarning {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--color-warning);
+}
+
+/* ── Generic list rows ──────────────────────────────────────────────────── */
+.listRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  font-size: 0.8rem;
+}
+
+.listRow:last-child {
+  border-bottom: none;
+}
+
+.rowName {
+  flex: 1;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mono {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+/* ── Empty states ───────────────────────────────────────────────────────── */
+.emptyOk {
+  padding: var(--space-5) var(--space-4);
+  text-align: center;
+  color: var(--color-ok);
+  font-size: 0.85rem;
+}
+
+.emptyMuted {
+  padding: var(--space-5) var(--space-4);
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+}
+
+.errorState {
+  padding: var(--space-5);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-critical);
+  border-radius: var(--radius-md);
+  color: var(--color-critical);
+  font-size: 0.85rem;
+}
+
+/* ── Footer link ────────────────────────────────────────────────────────── */
+.footerLink {
+  margin-top: auto;
+  padding: var(--space-3) var(--space-4);
+  background: transparent;
+  border: none;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-accent);
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.footerLink:hover {
+  color: var(--color-accent-dim);
+}
+
+/* ── Quick actions ──────────────────────────────────────────────────────── */
+.quickGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+  padding: var(--space-3);
+}
+
+.quickCard {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-3);
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.12s;
+}
+
+.quickCard:hover {
+  border-color: var(--color-accent);
+}
+
+.quickIcon {
+  color: var(--color-accent);
+}
+
+.quickLabel {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.quickSub {
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+}
+
+/* ── Skeleton loading ───────────────────────────────────────────────────── */
+.skeleton {
+  background: var(--color-bg-elevated);
+  border-radius: var(--radius-md);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+.skeletonStat {
+  height: 88px;
+}
+
+.skeletonPanel {
+  height: 220px;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.5; }
+  50%      { opacity: 1; }
+}
+
+/* ── Fleet Maintenance Status table ─────────────────────────────────────── */
+.fleetTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.fleetTable thead th {
+  font-family: var(--font-label);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.thLeft {
+  text-align: left;
+}
+
+.thNumber {
+  text-align: right;
+}
+
+.thSortable { cursor: pointer; user-select: none; transition: color 0.12s; }
+.thSortable:hover { color: var(--color-text-secondary); }
+.thSortActive { color: var(--color-text-primary); }
+.thInner { display: inline-flex; align-items: center; gap: 4px; }
+.sortCaret { font-size: 0.6rem; line-height: 1; }
+
+.filterHint { display: inline-flex; align-items: center; gap: var(--space-2); margin-left: auto; font-size: 0.75rem; color: var(--color-text-muted); }
+.clearBtn { background: transparent; border: 1px solid var(--color-border); border-radius: var(--radius-sm); color: var(--color-accent); cursor: pointer; font-size: 0.72rem; padding: 1px var(--space-2); font-family: var(--font-body); }
+.clearBtn:hover { border-color: var(--color-accent); }
+
+.fleetRow {
+  cursor: pointer;
+  transition: background 0.1s ease;
+  border-left: 3px solid transparent;
+}
+
+.fleetRow:hover {
+  background: var(--color-bg-elevated);
+}
+
+.fleetRow:focus-visible {
+  outline: none;
+  background: var(--color-bg-elevated);
+  box-shadow: inset 0 0 0 1px var(--color-accent);
+}
+
+.fleetRowGrounded {
+  border-left-color: var(--color-critical);
+  background: color-mix(in srgb, var(--color-critical) 5%, transparent);
+}
+
+.fleetTable tbody td {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  vertical-align: middle;
+}
+
+.fleetTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.cellMono {
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+}
+
+.cellName {
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 220px;
+}
+
+.cellMuted {
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.cellNumber {
+  text-align: right;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.cellNextDue {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.cellChevron {
+  width: 28px;
+  text-align: right;
+  color: var(--color-text-muted);
+}
+
+.airBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px var(--space-2);
+  border-radius: 999px;
+  font-family: var(--font-label);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+.airBadgeOk {
+  background: rgba(34, 197, 94, 0.15);
+  color: var(--color-ok);
+  border: 1px solid rgba(34, 197, 94, 0.35);
+}
+
+.airBadgeCritical {
+  background: rgba(239, 68, 68, 0.18);
+  color: var(--color-critical);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+.numCritical {
+  color: var(--color-critical);
+  font-weight: 600;
+}
+
+.numWarning {
+  color: var(--color-warning);
+  font-weight: 600;
+}
+
+.numMuted {
+  color: var(--color-text-muted);
+}

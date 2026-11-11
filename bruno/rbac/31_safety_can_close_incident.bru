@@ -1,0 +1,31 @@
+meta {
+  name: 31 Safety officer can close incident
+  type: http
+  seq: 31
+}
+
+put {
+  url: {{base_url}}/api/v1/incidents/{{rbac_incident_id}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{safety_token}}
+}
+
+body:json {
+  {
+    "status": "closed",
+    "root_cause": "RBAC test — safety officer closing"
+  }
+}
+
+tests {
+  test("status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("status field updated to closed", function() {
+    expect(res.getBody().status).to.equal("closed");
+  });
+}

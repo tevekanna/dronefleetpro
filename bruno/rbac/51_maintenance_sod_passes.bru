@@ -1,0 +1,40 @@
+meta {
+  name: 51 Maintenance SoD passes when created_by != sign_off
+  type: http
+  seq: 51
+}
+
+post {
+  url: {{base_url}}/api/v1/maintenance
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{tech_token}}
+}
+
+body:json {
+  {
+    "aircraft_id": {{rbac_aircraft_id}},
+    "performed_date": "2026-04-20",
+    "created_by": "RTE",
+    "remark": "RBAC test — SoD pass",
+    "action_taken": "Verified per manual",
+    "maint_category": "Scheduled",
+    "maint_type": "Test",
+    "sign_off": "ADM"
+  }
+}
+
+script:post-response {
+  if (res.getStatus() === 200 && res.getBody() && res.getBody().id) {
+    bru.setEnvVar("rbac_maint_id", res.getBody().id);
+  }
+}
+
+tests {
+  test("status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+}

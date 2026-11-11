@@ -1,0 +1,901 @@
+/* SPDX-License-Identifier: AGPL-3.0-only */
+/* Copyright (C) 2026 Lars Wallström */
+
+/* Aircraft workspace — persistent header, tab bar, and Maintenance-tab
+   panels. Styles consolidated here from the retired AircraftMaintenancePage
+   so the merged page owns its own presentation. The reused Overview/Flights
+   components keep their existing AircraftDetailPage.module.css. */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+/* ── Persistent header card ──────────────────────────────────────────────── */
+.headerCard {
+  display: flex;
+  gap: var(--space-5);
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding: var(--space-5);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+}
+
+.headerLeft {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  flex: 1;
+  min-width: 280px;
+}
+
+.headerTitleRow {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.headerTitle {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  letter-spacing: 0.02em;
+  margin: 0;
+}
+
+.statusBadge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+}
+
+.statusActive {
+  background: rgba(34, 197, 94, 0.12);
+  color: var(--color-ok);
+  border: 1px solid rgba(34, 197, 94, 0.35);
+}
+
+.statusRetired {
+  background: rgba(138, 155, 176, 0.1);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+}
+
+.statusMaintenance {
+  background: rgba(245, 158, 11, 0.12);
+  color: var(--color-warning);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.headerSub {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2);
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+}
+
+.headerMono {
+  font-family: var(--font-display);
+  color: var(--color-text-primary);
+}
+
+.modelLink {
+  color: var(--color-accent);
+  text-decoration: none;
+}
+
+.modelLink:hover {
+  text-decoration: underline;
+}
+
+.dotSep {
+  color: var(--color-text-muted);
+}
+
+.headerMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-5);
+  margin-top: var(--space-2);
+}
+
+.metaCell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.metaLabel {
+  font-family: var(--font-label);
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.metaValue {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  color: var(--color-text-primary);
+}
+
+.headerRight {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  align-items: flex-end;
+  min-width: 180px;
+}
+
+.airworthyPill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px var(--space-3);
+  border-radius: 999px;
+  font-family: var(--font-label);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+.airworthyOk {
+  background: rgba(34, 197, 94, 0.15);
+  color: var(--color-ok);
+  border: 1px solid rgba(34, 197, 94, 0.4);
+}
+
+.airworthyCritical {
+  background: rgba(239, 68, 68, 0.18);
+  color: var(--color-critical);
+  border: 1px solid rgba(239, 68, 68, 0.45);
+}
+
+.airworthinessReason {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  font-style: italic;
+  margin-top: var(--space-1);
+  max-width: 260px;
+  text-align: right;
+  line-height: 1.4;
+}
+
+.headerActions {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+}
+
+.btnSecondary {
+  background: transparent;
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-family: var(--font-body);
+}
+
+.btnSecondary:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+/* ── Tab bar ─────────────────────────────────────────────────────────────── */
+.tabBar {
+  display: flex;
+  background: var(--color-bg-base);
+  border-bottom: 1px solid var(--color-border);
+  overflow-x: auto;
+}
+
+.tab {
+  padding: 10px var(--space-4);
+  font-size: 0.85rem;
+  font-family: var(--font-body);
+  color: var(--color-text-secondary);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.12s, border-color 0.12s;
+}
+
+.tab:hover {
+  color: var(--color-text-primary);
+}
+
+.tabActive {
+  color: var(--color-accent);
+  border-bottom-color: var(--color-accent);
+}
+
+/* ── Overview summary strip ──────────────────────────────────────────────── */
+.summaryStrip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.summaryCell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 120px;
+}
+
+.summaryValue {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.summaryValueWarn {
+  color: var(--color-warning);
+}
+
+.summaryValueCrit {
+  color: var(--color-critical);
+}
+
+.summaryValueMuted {
+  color: var(--color-text-muted);
+}
+
+.summaryLabel {
+  font-family: var(--font-label);
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+/* Secondary line under a summary value — component breakdowns, utilisation
+   notes. Smaller and muted so it never competes with the value itself. */
+.summarySub {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.summarySubCrit {
+  color: var(--color-critical);
+}
+
+/* ── Panels (schedules, defects, history) ────────────────────────────────── */
+.panel {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+.panelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.panelTitle {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.panelHeaderRight {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.countBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 var(--space-2);
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 600;
+  background: var(--color-critical);
+  color: var(--color-text-inverse);
+}
+
+.btnTertiary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: transparent;
+  color: var(--color-accent);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-1) var(--space-3);
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-family: var(--font-body);
+}
+
+.btnTertiary:hover {
+  border-color: var(--color-accent);
+}
+
+.emptyMuted {
+  padding: var(--space-5) var(--space-4);
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+}
+
+/* ── Schedule rows ───────────────────────────────────────────────────────── */
+.scheduleList,
+.simpleList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.scheduleRow {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(160px, 1.2fr) 90px auto;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  font-size: 0.85rem;
+}
+
+.scheduleRow:last-child {
+  border-bottom: none;
+}
+
+.scheduleMain {
+  min-width: 0;
+}
+
+.scheduleName {
+  color: var(--color-text-primary);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.scheduleSub {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: baseline;
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  margin-top: 2px;
+}
+
+.scheduleBar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.scheduleBarPct {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  min-width: 36px;
+  text-align: right;
+}
+
+.barTrack {
+  flex: 1;
+  height: 6px;
+  background: var(--color-bg-elevated);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.2s ease;
+}
+
+.barOk {
+  background: var(--color-ok);
+}
+
+.barWarning {
+  background: var(--color-warning);
+}
+
+.barOverdue {
+  background: var(--color-critical);
+}
+
+.statusPill {
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  padding: 2px var(--space-2);
+  border-radius: 999px;
+  font-family: var(--font-label);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+.status_ok {
+  background: rgba(34, 197, 94, 0.15);
+  color: var(--color-ok);
+}
+
+.status_warning {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--color-warning);
+}
+
+.status_overdue {
+  background: rgba(239, 68, 68, 0.18);
+  color: var(--color-critical);
+}
+
+/* Per-row action cluster (Perform/Continue, Edit, History, Deactivate). */
+.scheduleActions {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  justify-self: end;
+}
+
+.btnPerform {
+  display: inline-flex;
+  align-items: center;
+  background: transparent;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-1) var(--space-3);
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-family: var(--font-body);
+}
+
+.btnPerform:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.btnContinue {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.btnContinue:hover {
+  background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+}
+
+.btnRowAction {
+  display: inline-flex;
+  align-items: center;
+  background: transparent;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-1) var(--space-3);
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-family: var(--font-body);
+  text-decoration: none;
+}
+
+.btnRowAction:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.btnRowIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-1);
+  color: var(--color-text-secondary);
+}
+
+.btnRowIcon:hover {
+  color: var(--color-accent);
+}
+
+.draftBadge {
+  display: inline-block;
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 1px 6px;
+  border-radius: 99px;
+  background: color-mix(in srgb, var(--color-accent) 15%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-accent) 40%, transparent);
+  color: var(--color-accent);
+  margin-left: var(--space-2);
+  vertical-align: middle;
+}
+
+.draftProgress {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--color-accent);
+  margin-left: var(--space-1);
+  font-family: var(--font-display);
+  vertical-align: middle;
+}
+
+/* ── Simple list rows (defects, history) ─────────────────────────────────── */
+.simpleRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  font-size: 0.82rem;
+}
+
+.simpleRow:last-child {
+  border-bottom: none;
+}
+
+.rowText {
+  flex: 1;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mono {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.defectBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-label);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.defectOpen {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--color-critical);
+}
+
+.defectInProgress {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--color-warning);
+}
+
+/* ── Mounted equipment card (Overview tab) ───────────────────────────────
+   Mirrors AircraftModelDocsCard.module.css so the two Overview cards read
+   as siblings: surface card, uppercase muted heading, rows on bg-base. */
+.mountedCard {
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-5);
+}
+
+.mountedHeading {
+  font-family: var(--font-label);
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-4);
+}
+
+/* Heading row with the "Mount equipment" action on the right. The row owns
+   the bottom margin, so the heading's own margin is zeroed inside it. */
+.mountedHeadingRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.mountedHeadingRow .mountedHeading {
+  margin-bottom: 0;
+}
+
+.mountedMountBtn {
+  display: inline-flex;
+  align-items: center;
+  background: transparent;
+  color: var(--color-accent);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-1) var(--space-3);
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-family: var(--font-body);
+}
+
+.mountedMountBtn:hover {
+  border-color: var(--color-accent);
+}
+
+.mountedGroup { margin-bottom: var(--space-4); }
+.mountedGroup:last-child { margin-bottom: 0; }
+
+.mountedGroupHeading {
+  font-family: var(--font-label);
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-2);
+}
+
+.mountedRowList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.mountedRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-bg-base);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.mountedRowMain {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.mountedRowTitle {
+  font-family: var(--font-display);
+  font-size: 0.88rem;
+  color: var(--color-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mountedRowLink {
+  color: var(--color-accent);
+  text-decoration: none;
+}
+.mountedRowLink:hover { text-decoration: underline; }
+
+.mountedRowMeta {
+  font-size: 0.74rem;
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+.mountedStatusActive {
+  background: rgba(34, 197, 94, 0.15);
+  color: var(--color-ok);
+}
+
+.mountedStatusMaintenance {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--color-warning);
+}
+
+.mountedUnmountBtn {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  background: transparent;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-1) var(--space-3);
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-family: var(--font-body);
+}
+
+.mountedUnmountBtn:hover:not(:disabled) {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.mountedUnmountBtn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.mountedEmpty {
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  padding: var(--space-3);
+  background: var(--color-bg-base);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-sm);
+  text-align: center;
+}
+
+.mountedError {
+  color: var(--color-critical);
+  font-size: 0.85rem;
+  margin-top: var(--space-2);
+}
+
+/* Unmount confirmation modal — same overlay/dialog pattern as the shared
+   RetireModal (project convention: destructive/state-changing confirmations are
+   modals, never browser confirm()). */
+.mountedConfirmOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.mountedConfirmModal {
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  width: 100%;
+  max-width: 440px;
+  box-shadow: var(--shadow-modal);
+}
+
+.mountedConfirmTitle {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-4);
+}
+
+.mountedConfirmBody {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin: 0 0 var(--space-5);
+}
+
+/* Inside the modal, the shared error line sits between body and actions. */
+.mountedConfirmModal .mountedError {
+  margin: 0 0 var(--space-4);
+}
+
+/* Mount-equipment picker: wider than the confirm dialog, scrolls when the
+   catalogue is long, and its action row needs its own top spacing since
+   groups (not a body paragraph) precede it. */
+.mountedMountModal {
+  max-width: 560px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.mountedMountModal .mountedConfirmActions {
+  margin-top: var(--space-5);
+}
+
+.mountedMuted {
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  margin-bottom: var(--space-3);
+}
+
+.mountedConfirmActions {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: flex-end;
+}
+
+.mountedBtnCancel {
+  background: transparent;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-family: var(--font-body);
+}
+
+.mountedBtnCancel:hover {
+  border-color: var(--color-border-strong);
+  color: var(--color-text-primary);
+}
+
+.mountedBtnConfirm {
+  background: var(--color-accent);
+  color: var(--color-text-inverse);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  font-family: var(--font-body);
+}
+
+.mountedBtnConfirm:hover:not(:disabled) {
+  background: var(--color-accent-dim);
+}
+
+.mountedBtnConfirm:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ── Skeleton / error ────────────────────────────────────────────────────── */
+.skeleton {
+  background: var(--color-bg-elevated);
+  border-radius: var(--radius-md);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+.skeletonHeader {
+  height: 140px;
+}
+
+.skeletonPanel {
+  height: 220px;
+}
+
+.errorBox {
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  color: var(--color-critical);
+  font-size: 0.9rem;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}

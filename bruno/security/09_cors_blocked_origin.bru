@@ -1,0 +1,28 @@
+meta {
+  name: 09 CORS blocks an unknown origin
+  type: http
+  seq: 9
+}
+
+options {
+  url: {{base_url}}/api/v1/health
+  body: none
+  auth: none
+}
+
+headers {
+  Origin: https://evil.example.com
+  Access-Control-Request-Method: GET
+  Access-Control-Request-Headers: authorization,content-type
+}
+
+tests {
+  test("Access-Control-Allow-Origin is not set for an untrusted origin", function() {
+    const allowOrigin =
+      res.getHeader("access-control-allow-origin") ||
+      res.getHeader("Access-Control-Allow-Origin");
+    // tower-http's CORS middleware omits the header entirely when the
+    // origin is not in the allowlist; the browser then refuses the request.
+    expect(allowOrigin === undefined || allowOrigin === null || allowOrigin === "").to.equal(true);
+  });
+}

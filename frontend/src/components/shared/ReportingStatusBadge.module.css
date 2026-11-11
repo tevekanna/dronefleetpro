@@ -1,0 +1,54 @@
+/* SPDX-License-Identifier: AGPL-3.0-only */
+/* Copyright (C) 2026 Lars Wallström */
+
+/* Occurrence-reporting status pill — mirrors SeverityBadge.module.css.
+   Colour mapping: overdue → critical (red), due / awaiting_awareness →
+   warning (amber), reported → ok (green, consistent with the resolved/closed
+   treatment), unclassified / undetermined / not_applicable → muted grey.
+   Backgrounds are a 0.15 tint of each token's base colour. */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.overdue {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--color-critical);
+}
+
+.due {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--color-warning);
+}
+
+.reported {
+  background: rgba(34, 197, 94, 0.15);
+  color: var(--color-ok);
+}
+
+.awaiting_awareness {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--color-warning);
+}
+
+.unclassified {
+  background: rgba(74, 85, 104, 0.15);
+  color: var(--color-text-muted);
+}
+
+.undetermined {
+  background: rgba(74, 85, 104, 0.15);
+  color: var(--color-text-muted);
+}
+
+.not_applicable {
+  background: rgba(74, 85, 104, 0.15);
+  color: var(--color-text-muted);
+}

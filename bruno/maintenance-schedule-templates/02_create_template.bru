@@ -1,0 +1,45 @@
+meta {
+  name: 02 Create Template (admin)
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{base_url}}/api/v1/maintenance-schedule-templates
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+body:json {
+  {
+    "model_id": {{seeded_template_model_id}},
+    "name": "TEST_Template_BatteryCheck",
+    "description": "Test template — added by Bruno suite, deleted in 99_cleanup.",
+    "interval_type": "calendar_days",
+    "interval_value": 30,
+    "warning_threshold": 0.75,
+    "is_critical": false
+  }
+}
+
+script:post-response {
+  if (res.getStatus() === 200 && res.getBody() && res.getBody().id) {
+    bru.setEnvVar("test_template_id", String(res.getBody().id));
+  }
+}
+
+tests {
+  test("status is 200", function() { expect(res.getStatus()).to.equal(200); });
+  test("response has numeric id", function() { expect(res.getBody().id).to.be.a('number'); });
+  test("name persisted", function() { expect(res.getBody().name).to.equal("TEST_Template_BatteryCheck"); });
+  test("interval_type persisted", function() { expect(res.getBody().interval_type).to.equal("calendar_days"); });
+  test("warning_threshold persisted", function() { expect(res.getBody().warning_threshold).to.equal(0.75); });
+  test("is_active true on create", function() { expect(res.getBody().is_active).to.equal(true); });
+  test("created_by populated from JWT user_code", function() {
+    expect(res.getBody().created_by).to.be.a('string').and.not.empty;
+  });
+}

@@ -1,0 +1,48 @@
+meta {
+  name: 02 Create Calendar Schedule (calendar_days)
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{base_url}}/api/v1/maintenance-schedules
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+body:json {
+  {
+    "aircraft_id": {{aircraft_id}},
+    "name": "Annual service",
+    "interval_type": "calendar_days",
+    "interval_value": 365,
+    "last_performed_at": "2025-01-15T00:00:00Z"
+  }
+}
+
+script:post-response {
+  if (res.getStatus() === 200 && res.getBody() && res.getBody().id) {
+    bru.setEnvVar("calendar_schedule_id", res.getBody().id);
+  }
+}
+
+tests {
+  test("status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("next_due_at is approximately 2026-01-15", function() {
+    const due = res.getBody().next_due_at;
+    expect(due).to.be.a('string');
+    expect(due.startsWith("2026-01-15")).to.equal(true);
+  });
+  test("next_due_flight_hours is null", function() {
+    expect(res.getBody().next_due_flight_hours).to.equal(null);
+  });
+  test("next_due_cycles is null", function() {
+    expect(res.getBody().next_due_cycles).to.equal(null);
+  });
+}

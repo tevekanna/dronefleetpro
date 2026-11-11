@@ -1,0 +1,45 @@
+meta {
+  name: 03 Create Schedule Never Performed (cycles)
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{base_url}}/api/v1/maintenance-schedules
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+body:json {
+  {
+    "aircraft_id": {{aircraft_id}},
+    "name": "First-time check",
+    "interval_type": "cycles",
+    "interval_value": 100
+  }
+}
+
+script:post-response {
+  if (res.getStatus() === 200 && res.getBody() && res.getBody().id) {
+    bru.setEnvVar("never_schedule_id", res.getBody().id);
+  }
+}
+
+tests {
+  test("status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("next_due_at is null (no baseline)", function() {
+    expect(res.getBody().next_due_at).to.equal(null);
+  });
+  test("next_due_flight_hours is null (no baseline)", function() {
+    expect(res.getBody().next_due_flight_hours).to.equal(null);
+  });
+  test("next_due_cycles is null (no baseline)", function() {
+    expect(res.getBody().next_due_cycles).to.equal(null);
+  });
+}

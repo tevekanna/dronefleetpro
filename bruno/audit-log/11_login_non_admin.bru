@@ -1,0 +1,45 @@
+meta {
+  name: 11 Login as non-admin (seeds non_admin_token)
+  type: http
+  seq: 11
+}
+
+post {
+  url: {{base_url}}/api/v1/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "audit-test-pilot@dronefleetpro.local",
+    "password": "dronefleet2025"
+  }
+}
+
+docs {
+  Depends on a persistent fixture user with role='pilot':
+
+    INSERT INTO users (org_id, name, email, user_code, password_hash, role, is_active)
+    VALUES (1, 'Audit Test Pilot', 'audit-test-pilot@dronefleetpro.local', 'ATP',
+            '$2b$12$7T3ErfyTki4vQSnnFP6Spuw39JbFFRzMsrdsH/ZIFHgQrs0mJ13h.',
+            'pilot', TRUE)
+    ON CONFLICT (org_id, email) DO UPDATE SET role = 'pilot', is_active = TRUE;
+
+  Password: dronefleet2025 (same hash as the seeded admin).
+}
+
+script:post-response {
+  if (res.getStatus() === 200 && res.getBody() && res.getBody().token) {
+    bru.setEnvVar("non_admin_token", res.getBody().token);
+  }
+}
+
+tests {
+  test("status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("non_admin_token stored", function() {
+    expect(bru.getEnvVar("non_admin_token")).to.be.a('string').and.not.empty;
+  });
+}

@@ -1,0 +1,34 @@
+meta {
+  name: 04 List Schedules
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{base_url}}/api/v1/maintenance-schedules
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+tests {
+  test("status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("response is an array", function() {
+    expect(Array.isArray(res.getBody())).to.equal(true);
+  });
+  test("contains the three created schedules", function() {
+    const ids = res.getBody().map(s => s.id);
+    expect(ids).to.include(Number(bru.getEnvVar("schedule_id")));
+    expect(ids).to.include(Number(bru.getEnvVar("calendar_schedule_id")));
+    expect(ids).to.include(Number(bru.getEnvVar("never_schedule_id")));
+  });
+  test("all returned rows have is_active == true", function() {
+    const allActive = res.getBody().every(s => s.is_active === true);
+    expect(allActive).to.equal(true);
+  });
+}

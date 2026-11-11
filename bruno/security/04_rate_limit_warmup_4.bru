@@ -1,0 +1,24 @@
+meta {
+  name: 04 Rate-limit warmup 4 (bad creds → 401)
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{base_url}}/api/v1/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "rl-test@dronefleetpro.local",
+    "password": "wrong-password-on-purpose"
+  }
+}
+
+tests {
+  test("status is 401 (bad creds, but allowed past limiter)", function() {
+    expect(res.getStatus()).to.equal(401);
+  });
+}

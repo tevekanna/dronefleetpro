@@ -1,0 +1,21 @@
+meta {
+  name: 92 Cleanup — delete test maintenance record
+  type: http
+  seq: 92
+}
+
+delete {
+  url: {{base_url}}/api/v1/maintenance/{{rbac_maint_id}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{admin_token}}
+}
+
+tests {
+  test("status is 200 or 404", function() {
+    expect([200, 404]).to.include(res.getStatus());
+  });
+}

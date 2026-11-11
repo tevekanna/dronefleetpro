@@ -1,0 +1,48 @@
+meta {
+  name: 05 Sync Template — specific aircraft_ids
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{base_url}}/api/v1/maintenance-schedule-templates/{{test_template_id}}/sync
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+body:json {
+  {
+    "aircraft_ids": []
+  }
+}
+
+docs {
+  Sends an empty aircraft_ids list. The handler treats empty/missing
+  the same way (broaden to all aircraft sharing the template's model).
+  We don't pre-create a matching schedule here, so synced may be 0 —
+  that's fine; this test verifies the endpoint is reachable, returns
+  200 with the documented response shape, and that the count fields
+  are non-negative integers.
+}
+
+tests {
+  test("status is 200", function() { expect(res.getStatus()).to.equal(200); });
+  test("response has synced field", function() {
+    expect(res.getBody()).to.have.property("synced");
+    expect(res.getBody().synced).to.be.a('number');
+  });
+  test("response has skipped_no_schedule field", function() {
+    expect(res.getBody()).to.have.property("skipped_no_schedule");
+  });
+  test("response has schedules_updated field", function() {
+    expect(res.getBody()).to.have.property("schedules_updated");
+  });
+  test("synced + skipped_no_schedule both >= 0", function() {
+    expect(res.getBody().synced).to.be.at.least(0);
+    expect(res.getBody().skipped_no_schedule).to.be.at.least(0);
+  });
+}

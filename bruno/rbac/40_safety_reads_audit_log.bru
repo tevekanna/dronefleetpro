@@ -1,0 +1,21 @@
+meta {
+  name: 40 Safety officer can read audit log
+  type: http
+  seq: 40
+}
+
+get {
+  url: {{base_url}}/api/v1/audit-log?per_page=10
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{safety_token}}
+}
+
+tests {
+  test("status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+}

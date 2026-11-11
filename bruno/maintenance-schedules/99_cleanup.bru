@@ -1,0 +1,45 @@
+meta {
+  name: 99 Cleanup — Soft-Delete Remaining Test Schedules
+  type: http
+  seq: 99
+}
+
+delete {
+  url: {{base_url}}/api/v1/maintenance-schedules/{{calendar_schedule_id}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+docs {
+  Runs two DELETE calls back-to-back via the post-response script, so a
+  single Bruno request entry cleans up both remaining schedules
+  (calendar_schedule_id and never_schedule_id). Run this last.
+}
+
+script:post-response {
+  // Also soft-delete the "never performed" schedule
+  try {
+    const neverId = bru.getEnvVar("never_schedule_id");
+    if (neverId) {
+      const baseUrl = bru.getEnvVar("base_url") || "http://localhost:3000";
+      const token = bru.getEnvVar("access_token");
+      await fetch(`${baseUrl}/api/v1/maintenance-schedules/${neverId}`, {
+        method: "DELETE",
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+    }
+  } catch (e) {
+    console.log("cleanup: secondary delete failed", e);
+  }
+}
+
+tests {
+  test("calendar delete status is 200 or 204", function() {
+    const s = res.getStatus();
+    expect(s === 200 || s === 204).to.equal(true);
+  });
+}

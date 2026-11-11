@@ -1,0 +1,159 @@
+/* SPDX-License-Identifier: AGPL-3.0-only */
+/* Copyright (C) 2026 Lars Wallström */
+
+.sourceBadge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-family: var(--font-display);
+  background: var(--color-bg-elevated);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+}
+
+.sourceBadgeDji {
+  background: var(--color-accent-glow);
+  color: var(--color-accent);
+  border-color: var(--color-accent-dim);
+}
+
+.sourceBadgeNone {
+  color: var(--color-text-muted);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+}
+
+.th {
+  text-align: left;
+  padding: var(--space-2) var(--space-3);
+  color: var(--color-text-muted);
+  font-family: var(--font-label);
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.td {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+}
+
+.mono {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+}
+
+.row {
+  cursor: pointer;
+  transition: background 0.1s ease;
+}
+
+.row:hover {
+  background: var(--color-bg-elevated);
+}
+
+.batteryLink {
+  display: inline-block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.btnDelete {
+  background: transparent;
+  color: var(--color-critical);
+  border: 1px solid var(--color-critical);
+  border-radius: var(--radius-sm);
+  padding: var(--space-1) var(--space-2);
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-family: var(--font-body);
+}
+
+/* --- Sortie grouping (view-level) --- */
+
+.sortieHeaderRow {
+  cursor: pointer;
+  transition: background 0.1s ease;
+}
+
+.sortieHeaderRow:hover {
+  background: var(--color-bg-elevated);
+}
+
+.sortieHeaderCell {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-bg-surface);
+}
+
+.sortieHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.chevron {
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.chevronOpen {
+  transform: rotate(90deg);
+}
+
+.sortieLabel {
+  font-family: var(--font-label);
+  font-size: 0.7rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+}
+
+.countPill {
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 1px 8px;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.sortieTotal {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+}
+
+.continuation {
+  font-family: var(--font-label);
+  font-size: 0.78rem;
+  color: var(--color-warning);
+  white-space: nowrap;
+}
+
+/* Nested (sortie member) rows: indent + accent rail so they read as
+   children of the header above them. */
+.nestedRow {
+  background: var(--color-bg-base);
+}
+
+.nestedRow > .td:first-child {
+  border-left: 2px solid var(--color-border-strong);
+  padding-left: var(--space-4);
+}

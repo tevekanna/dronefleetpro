@@ -1,0 +1,31 @@
+meta {
+  name: 03 Filter by aircraft_id
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{base_url}}/api/v1/flights?aircraft_id={{flights_pivot_aircraft_id}}&per_page=50
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+docs {
+  Uses the pivot aircraft_id captured in 01_list_no_filters. If the dev DB
+  has zero flights with an aircraft, the env var will be empty and the
+  request will be a syntactic 400 — that's fine, just re-seed flight data.
+}
+
+tests {
+  test("status is 200", function() { expect(res.getStatus()).to.equal(200); });
+  test("every returned flight has the requested aircraft_id", function() {
+    const target = Number(bru.getEnvVar("flights_pivot_aircraft_id"));
+    res.getBody().flights.forEach(f => {
+      expect(f.aircraft_id).to.equal(target);
+    });
+  });
+}

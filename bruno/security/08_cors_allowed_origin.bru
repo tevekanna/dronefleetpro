@@ -1,0 +1,39 @@
+meta {
+  name: 08 CORS allows a trusted origin
+  type: http
+  seq: 8
+}
+
+options {
+  url: {{base_url}}/api/v1/health
+  body: none
+  auth: none
+}
+
+headers {
+  Origin: http://localhost:5173
+  Access-Control-Request-Method: GET
+  Access-Control-Request-Headers: authorization,content-type
+}
+
+tests {
+  test("Access-Control-Allow-Origin admits the trusted origin", function() {
+    const allowOrigin =
+      res.getHeader("access-control-allow-origin") ||
+      res.getHeader("Access-Control-Allow-Origin");
+    // Release builds echo the origin from the CORS_ORIGINS allowlist; debug
+    // builds (the dev stack) allow any origin and answer "*".
+    expect(["http://localhost:5173", "*"]).to.include(allowOrigin);
+  });
+}
+
+docs {
+  Preflight from an origin that is always trusted: http://localhost:5173 is
+  the release-build default for CORS_ORIGINS and the address of the dev
+  frontend.
+
+  A release build answers with that exact origin. A debug build (the dev
+  stack) is dev-permissive and answers "*", so the test accepts either.
+  A production deployment lists its own public origin in CORS_ORIGINS; to
+  check it, run this request with that origin instead.
+}

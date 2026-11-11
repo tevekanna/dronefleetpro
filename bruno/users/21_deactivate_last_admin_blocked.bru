@@ -1,0 +1,36 @@
+meta {
+  name: 21 Last-admin guard — solo admin cannot demote themselves either, but the deactivation block is the canonical case
+  type: http
+  seq: 21
+}
+
+put {
+  url: {{base_url}}/api/v1/users/{{solo_admin_id}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{solo_admin_token}}
+}
+
+body:json {
+  {
+    "role": "viewer"
+  }
+}
+
+docs {
+  The solo admin is also targeting themselves, so the self-demotion guard
+  fires first with 409 "your own role". This is by design — both guards
+  protect the same invariant from different angles.
+
+  The pure last-admin path (admin A demoting admin B who is the only OTHER
+  admin) is unreachable in this two-actor fixture without seeding a second
+  admin first; that branch is covered by the unit logic in users.rs and by
+  the manual verification step.
+}
+
+tests {
+  test("status is 409 (Conflict)", function() { expect(res.getStatus()).to.equal(409); });
+}

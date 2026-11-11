@@ -1,0 +1,44 @@
+meta {
+  name: 06 Detail — UPDATE entry with diff
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{base_url}}/api/v1/audit-log/{{audit_update_id}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+tests {
+  test("status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("action is UPDATE", function() {
+    expect(res.getBody().action).to.equal('UPDATE');
+  });
+  test("diff has before/after objects", function() {
+    const diff = res.getBody().diff;
+    expect(diff).to.be.an('object');
+    expect(diff.before).to.be.an('object');
+    expect(diff.after).to.be.an('object');
+  });
+  test("changed_fields is a non-empty array of objects", function() {
+    const cf = res.getBody().changed_fields;
+    expect(cf).to.be.an('array').with.length.greaterThan(0);
+    cf.forEach(f => {
+      expect(f).to.have.property('field').that.is.a('string');
+      expect(f).to.have.property('before');
+      expect(f).to.have.property('after');
+    });
+  });
+  test("before and after of each changed field differ", function() {
+    res.getBody().changed_fields.forEach(f => {
+      expect(JSON.stringify(f.before)).to.not.equal(JSON.stringify(f.after));
+    });
+  });
+}

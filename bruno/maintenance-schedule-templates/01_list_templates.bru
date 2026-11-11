@@ -1,0 +1,43 @@
+meta {
+  name: 01 List Templates (seeded by migration 021)
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{base_url}}/api/v1/maintenance-schedule-templates
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+script:post-response {
+  if (res.getStatus() === 200 && Array.isArray(res.getBody()) && res.getBody().length > 0) {
+    // Stash the first template's id and model_id for downstream tests
+    // that need a known-good template/model pair.
+    const t = res.getBody()[0];
+    bru.setEnvVar("seeded_template_id", String(t.id));
+    bru.setEnvVar("seeded_template_model_id", String(t.model_id));
+  }
+}
+
+tests {
+  test("status is 200", function() { expect(res.getStatus()).to.equal(200); });
+  test("response is array", function() { expect(Array.isArray(res.getBody())).to.equal(true); });
+  test("has at least 1 seeded template", function() {
+    expect(res.getBody().length).to.be.greaterThan(0);
+  });
+  test("each item has expected schedule-template shape", function() {
+    const t = res.getBody()[0];
+    expect(t).to.have.property("id");
+    expect(t).to.have.property("model_id");
+    expect(t).to.have.property("name");
+    expect(t).to.have.property("interval_type");
+    expect(t).to.have.property("interval_value");
+    expect(t).to.have.property("warning_threshold");
+    expect(t).to.have.property("is_active");
+  });
+}

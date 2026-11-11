@@ -1,0 +1,37 @@
+/* SPDX-License-Identifier: AGPL-3.0-only */
+/* Copyright (C) 2026 Lars Wallström */
+
+/* Severity pill — colour mapping mirrors the design system's status tokens:
+   critical → critical (red), high → warning (amber), medium → info (indigo),
+   low → muted grey. Backgrounds are a 0.15 tint of each token's base colour. */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.critical {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--color-critical);
+}
+
+.high {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--color-warning);
+}
+
+.medium {
+  background: rgba(99, 102, 241, 0.15);
+  color: var(--color-info);
+}
+
+.low {
+  background: rgba(74, 85, 104, 0.15);
+  color: var(--color-text-muted);
+}

@@ -1,0 +1,44 @@
+/* SPDX-License-Identifier: AGPL-3.0-only */
+/* Copyright (C) 2026 Lars Wallström */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-label);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.ok {
+  color: var(--color-ok);
+  background: color-mix(in srgb, var(--color-ok) 10%, transparent);
+  border-color: color-mix(in srgb, var(--color-ok) 35%, transparent);
+}
+.ok .dot { background: var(--color-ok); }
+
+.warning {
+  color: var(--color-warning);
+  background: color-mix(in srgb, var(--color-warning) 12%, transparent);
+  border-color: color-mix(in srgb, var(--color-warning) 40%, transparent);
+}
+.warning .dot { background: var(--color-warning); }
+
+.overdue {
+  color: var(--color-critical);
+  background: color-mix(in srgb, var(--color-critical) 14%, transparent);
+  border-color: color-mix(in srgb, var(--color-critical) 45%, transparent);
+}
+.overdue .dot { background: var(--color-critical); }

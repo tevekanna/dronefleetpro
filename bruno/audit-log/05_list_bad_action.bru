@@ -1,0 +1,26 @@
+meta {
+  name: 05 List rejects unknown action
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{base_url}}/api/v1/audit-log?action=FOOBAR
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+tests {
+  test("status is 400", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+  test("error names the allowed actions", function() {
+    expect(res.getBody().error).to.include('INSERT');
+    expect(res.getBody().error).to.include('UPDATE');
+    expect(res.getBody().error).to.include('DELETE');
+  });
+}

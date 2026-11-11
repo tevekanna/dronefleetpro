@@ -1,0 +1,275 @@
+/* SPDX-License-Identifier: AGPL-3.0-only */
+/* Copyright (C) 2026 Lars Wallström */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  width: 100%;
+  max-width: 440px;
+  box-shadow: var(--shadow-modal);
+  text-align: center;
+}
+
+.icon {
+  margin-bottom: var(--space-4);
+}
+
+.iconDanger {
+  color: var(--color-critical);
+}
+
+.iconSuccess {
+  color: var(--color-ok);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-3);
+}
+
+.body {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin-bottom: var(--space-5);
+}
+
+.checkboxRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  justify-content: center;
+  margin-bottom: var(--space-5);
+  cursor: pointer;
+}
+
+.checkbox {
+  accent-color: var(--color-critical);
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.checkboxLabel {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  user-select: none;
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: center;
+}
+
+.btnCancel {
+  background: transparent;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-family: var(--font-body);
+}
+
+.btnCancel:hover {
+  border-color: var(--color-border-strong);
+  color: var(--color-text-primary);
+}
+
+.btnDelete {
+  background: var(--color-critical);
+  color: var(--color-text-inverse);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  font-family: var(--font-body);
+}
+
+.btnDelete:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btnClose {
+  background: var(--color-accent);
+  color: var(--color-text-inverse);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  font-family: var(--font-body);
+}
+
+.resultCount {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+/* Same pattern as .errorBanner in maintenance/MaintenanceModal.module.css */
+.errorBanner {
+  padding: var(--space-2) var(--space-3);
+  background: color-mix(in srgb, var(--color-critical) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-critical) 45%, transparent);
+  border-radius: var(--radius-sm);
+  color: var(--color-critical);
+  font-size: 0.82rem;
+  margin-bottom: var(--space-3);
+  text-align: left;
+}
+
+.loadingNote {
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-3);
+}
+
+.retentionBlock {
+  text-align: left;
+  background: color-mix(in srgb, var(--color-warning) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-warning) 40%, transparent);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.retentionHeading {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-warning);
+  margin-bottom: var(--space-3);
+}
+
+.retentionHeadingIcon {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.retentionCounts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.countRow {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.countValue {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  min-width: 2ch;
+  text-align: right;
+}
+
+.countLabel {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+
+.breakdownTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--space-3);
+}
+
+.breakdownTable td {
+  padding: var(--space-1) var(--space-2);
+  border-top: 1px solid var(--color-border);
+  font-size: 0.76rem;
+}
+
+.breakdownTableCell {
+  font-family: var(--font-display);
+  color: var(--color-text-primary);
+}
+
+.breakdownCount {
+  font-family: var(--font-display);
+  color: var(--color-text-primary);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.breakdownEffect {
+  font-family: var(--font-body);
+  color: var(--color-text-muted);
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin-bottom: var(--space-3);
+}
+
+.fieldLabel {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  color: var(--color-text-secondary);
+}
+
+.fieldInput,
+.fieldTextarea {
+  background: var(--color-bg-input);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  padding: var(--space-2);
+  width: 100%;
+}
+
+.fieldInput:focus,
+.fieldTextarea:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+.fieldTextarea {
+  resize: vertical;
+}
+
+.fieldError {
+  font-family: var(--font-body);
+  font-size: 0.74rem;
+  color: var(--color-critical);
+}

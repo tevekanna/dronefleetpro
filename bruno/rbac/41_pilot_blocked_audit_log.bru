@@ -1,0 +1,21 @@
+meta {
+  name: 41 Pilot blocked from audit log
+  type: http
+  seq: 41
+}
+
+get {
+  url: {{base_url}}/api/v1/audit-log?per_page=10
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{pilot_token}}
+}
+
+tests {
+  test("status is 403", function() {
+    expect(res.getStatus()).to.equal(403);
+  });
+}

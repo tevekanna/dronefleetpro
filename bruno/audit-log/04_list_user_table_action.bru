@@ -1,0 +1,29 @@
+meta {
+  name: 04 List filtered by user + table + action
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{base_url}}/api/v1/audit-log?user_id=1&table_name=maintenance_schedules&action=UPDATE&per_page=10
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+tests {
+  test("status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("every item matches all three filters", function() {
+    const items = res.getBody().items;
+    items.forEach(i => {
+      expect(i.user_id).to.equal(1);
+      expect(i.table_name).to.equal('maintenance_schedules');
+      expect(i.action).to.equal('UPDATE');
+    });
+  });
+}

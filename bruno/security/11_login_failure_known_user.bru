@@ -1,0 +1,35 @@
+meta {
+  name: 11 Failed login (known user, bad password) writes LOGIN_FAILURE
+  type: http
+  seq: 11
+}
+
+post {
+  url: {{base_url}}/api/v1/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "admin@dronefleetpro.local",
+    "password": "definitely-not-the-right-password"
+  }
+}
+
+docs {
+  When the email matches a real user but the password is wrong, the audit
+  row carries that user's id and user_code (so brute-force investigations
+  can scope by account).
+}
+
+tests {
+  test("status is 401", function() {
+    expect(res.getStatus()).to.equal(401);
+  });
+  test("response is generic (no enumeration leak)", function() {
+    const b = res.getBody();
+    const msg = (b && b.error) ? b.error.toLowerCase() : '';
+    expect(msg).to.match(/invalid email or password|invalid|unauthorized/);
+  });
+}

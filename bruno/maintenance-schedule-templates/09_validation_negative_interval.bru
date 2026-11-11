@@ -1,0 +1,28 @@
+meta {
+  name: 09 Validation — interval_value <= 0 returns 400
+  type: http
+  seq: 9
+}
+
+post {
+  url: {{base_url}}/api/v1/maintenance-schedule-templates
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+body:json {
+  {
+    "model_id": {{seeded_template_model_id}},
+    "name": "TEST_BadInterval",
+    "interval_type": "flight_hours",
+    "interval_value": -1
+  }
+}
+
+tests {
+  test("status is 400", function() { expect(res.getStatus()).to.equal(400); });
+}

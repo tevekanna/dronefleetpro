@@ -1,0 +1,30 @@
+meta {
+  name: 06 Filter by easa_category
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{base_url}}/api/v1/flights?easa_category={{flights_pivot_easa_category}}&per_page=50
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+tests {
+  test("status is 200 OR 400 (no pivot easa_category)", function() {
+    const s = res.getStatus();
+    expect(s === 200 || s === 400).to.equal(true);
+  });
+  test("when 200, every returned flight has the requested easa_category", function() {
+    if (res.getStatus() !== 200) return;
+    const target = bru.getEnvVar("flights_pivot_easa_category");
+    if (!target) return;
+    res.getBody().flights.forEach(f => {
+      expect(f.easa_category).to.equal(target);
+    });
+  });
+}

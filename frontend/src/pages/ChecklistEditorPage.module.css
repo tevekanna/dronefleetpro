@@ -1,0 +1,265 @@
+/* SPDX-License-Identifier: AGPL-3.0-only */
+/* Copyright (C) 2026 Lars Wallström */
+
+/* Full-page editor chrome — first such page in the codebase.
+   Sticky header keeps Save / Cancel reachable while the operator scrolls
+   through long checklists. Body is a vertical stack of section cards. */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 60px);
+}
+
+.headerBar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--color-bg-elevated);
+  border-bottom: 1px solid var(--color-border-strong);
+  padding: var(--space-4) var(--space-5);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
+}
+
+.headerLeft { flex: 1; min-width: 0; }
+
+.title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+.dirtyDot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-warning);
+  margin-right: 6px;
+}
+
+.headerActions { display: flex; gap: var(--space-2); align-items: center; }
+
+.btnPrimary {
+  background: var(--color-accent);
+  color: var(--color-text-inverse);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+.btnPrimary:disabled { opacity: 0.45; cursor: not-allowed; }
+.btnPrimary:hover:not(:disabled) { filter: brightness(1.08); }
+
+.btnSecondary {
+  background: transparent;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+.btnSecondary:hover { color: var(--color-text-primary); border-color: var(--color-border-strong); }
+
+.body {
+  padding: var(--space-5);
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.headerFields {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: var(--space-4);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+
+@media (max-width: 800px) {
+  .headerFields { grid-template-columns: 1fr 1fr; }
+}
+
+.field { display: flex; flex-direction: column; gap: var(--space-1); }
+
+.label {
+  font-size: 0.78rem;
+  color: var(--color-text-secondary);
+  font-family: var(--font-label);
+}
+
+.input, .select {
+  background: var(--color-bg-input);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-3);
+  color: var(--color-text-primary);
+  font-size: 0.9rem;
+  font-family: var(--font-body);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.inputError { border-color: var(--color-critical); }
+.errorText {
+  color: var(--color-critical);
+  font-size: 0.78rem;
+  margin-top: 2px;
+}
+
+.typeBadge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  background: color-mix(in srgb, var(--color-accent) 18%, transparent);
+  color: var(--color-accent);
+  border: 1px solid color-mix(in srgb, var(--color-accent) 35%, transparent);
+  text-transform: uppercase;
+  align-self: flex-start;
+}
+
+.errorBanner {
+  padding: var(--space-3) var(--space-4);
+  background: color-mix(in srgb, var(--color-critical) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-critical) 45%, transparent);
+  border-radius: var(--radius-sm);
+  color: var(--color-critical);
+  font-size: 0.85rem;
+  margin-bottom: var(--space-4);
+}
+
+.sectionCard {
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.sectionHeaderLeft { flex: 1; min-width: 0; }
+
+.sectionTitleInput {
+  background: var(--color-bg-input);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-3);
+  color: var(--color-text-primary);
+  font-size: 1rem;
+  font-family: var(--font-display);
+  font-weight: 500;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.iconButton {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.iconButton:hover:not(:disabled) {
+  color: var(--color-text-primary);
+  border-color: var(--color-border-strong);
+}
+.iconButton:disabled { opacity: 0.35; cursor: not-allowed; }
+.iconButtonDanger:hover:not(:disabled) {
+  color: var(--color-critical);
+  border-color: var(--color-critical);
+}
+
+.sectionFlags {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.85rem;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  user-select: none;
+}
+
+.itemList { display: flex; flex-direction: column; gap: var(--space-2); }
+
+.itemRow {
+  display: grid;
+  grid-template-columns: 2fr 3fr 1fr auto auto auto;
+  gap: var(--space-2);
+  align-items: center;
+  padding: var(--space-2);
+  background: var(--color-bg-base);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+@media (max-width: 800px) {
+  .itemRow {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.addButton {
+  background: transparent;
+  color: var(--color-accent);
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-3);
+  cursor: pointer;
+  font-size: 0.85rem;
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+.addButton:hover { background: color-mix(in srgb, var(--color-accent) 8%, transparent); }
+
+.emptyHint {
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  padding: var(--space-4);
+  background: var(--color-bg-surface);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-4);
+}

@@ -1,0 +1,91 @@
+/* SPDX-License-Identifier: AGPL-3.0-only */
+/* Copyright (C) 2026 Lars Wallström */
+
+/* tokens.css — single source of truth for all visual decisions */
+
+:root {
+  /* Backgrounds */
+  --color-bg-base:        #0a0d12;
+  --color-bg-surface:     #111620;
+  --color-bg-elevated:    #1a2030;
+  --color-bg-input:       #0d1117;
+
+  /* Borders */
+  --color-border:         #1e2d40;
+  --color-border-strong:  #2a3f58;
+
+  /* Text */
+  --color-text-primary:   #e8edf5;
+  --color-text-secondary: #8899aa;
+  --color-text-muted:     #8a9bb0;
+  --color-text-inverse:   #0a0d12;
+
+  /* Brand accent */
+  --color-accent:         #0ea5e9;
+  --color-accent-dim:     #0369a1;
+  --color-accent-glow:    rgba(14, 165, 233, 0.15);
+
+  /* Status colors */
+  --color-ok:             #22c55e;
+  --color-warning:        #f59e0b;
+  --color-critical:       #ef4444;
+  --color-info:           #6366f1;
+
+  /* Typography */
+  --font-display:   'DM Mono', 'JetBrains Mono', monospace;
+  --font-body:      'Inter', system-ui, sans-serif;
+  --font-label:     'Inter', system-ui, sans-serif;
+
+  /* Spacing scale */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  24px;
+  --space-6:  32px;
+  --space-8:  48px;
+  --space-10: 64px;
+
+  /* Border radius */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+
+  /* Shadows */
+  --shadow-card:   0 1px 3px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.6);
+  --shadow-modal:  0 20px 60px rgba(0,0,0,0.6);
+}
+
+/* Light theme overrides */
+[data-theme="light"] {
+  /* Backgrounds */
+  --color-bg-base:        #f0f2f5;
+  --color-bg-surface:     #ffffff;
+  --color-bg-elevated:    #ffffff;
+  --color-bg-input:       #f8f9fa;
+
+  /* Borders */
+  --color-border:         #e2e8f0;
+  --color-border-strong:  #cbd5e0;
+
+  /* Text */
+  --color-text-primary:   #0f1923;
+  --color-text-secondary: #2d3748;
+  --color-text-muted:     #4a5568;
+  --color-text-inverse:   #ffffff;
+
+  /* Brand accent — unchanged */
+  --color-accent:         #0ea5e9;
+  --color-accent-dim:     #0369a1;
+  --color-accent-glow:    rgba(14, 165, 233, 0.1);
+
+  /* Status colors — slightly deeper for light bg contrast */
+  --color-ok:             #16a34a;
+  --color-warning:        #d97706;
+  --color-critical:       #dc2626;
+  --color-info:           #4f46e5;
+
+  /* Shadows — softer for light mode */
+  --shadow-card:   0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-modal:  0 20px 60px rgba(0,0,0,0.15);
+}

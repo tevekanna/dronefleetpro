@@ -1,0 +1,24 @@
+meta {
+  name: 15 Verify Soft Delete
+  type: http
+  seq: 15
+}
+
+get {
+  url: {{base_url}}/api/v1/maintenance-schedules/{{schedule_id}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+tests {
+  test("status is 200 (record still exists)", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("is_active is false", function() {
+    expect(res.getBody().is_active).to.equal(false);
+  });
+}

@@ -1,0 +1,99 @@
+/* SPDX-License-Identifier: AGPL-3.0-only */
+/* Copyright (C) 2026 Lars Wallström */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-label);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+}
+
+.insert {
+  color: var(--color-ok);
+  background: color-mix(in srgb, var(--color-ok) 12%, transparent);
+  border-color: color-mix(in srgb, var(--color-ok) 35%, transparent);
+}
+.insert .dot { background: var(--color-ok); }
+
+.update {
+  color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 14%, transparent);
+  border-color: color-mix(in srgb, var(--color-accent) 40%, transparent);
+}
+.update .dot { background: var(--color-accent); }
+
+.delete {
+  color: var(--color-critical);
+  background: color-mix(in srgb, var(--color-critical) 14%, transparent);
+  border-color: color-mix(in srgb, var(--color-critical) 45%, transparent);
+}
+.delete .dot { background: var(--color-critical); }
+
+.export {
+  color: var(--color-info);
+  background: color-mix(in srgb, var(--color-info) 12%, transparent);
+  border-color: color-mix(in srgb, var(--color-info) 35%, transparent);
+}
+.export .dot { background: var(--color-info); }
+
+.import {
+  color: var(--color-warning);
+  background: color-mix(in srgb, var(--color-warning) 12%, transparent);
+  border-color: color-mix(in srgb, var(--color-warning) 35%, transparent);
+}
+.import .dot { background: var(--color-warning); }
+
+.purge {
+  color: var(--color-critical);
+  background: color-mix(in srgb, var(--color-critical) 18%, transparent);
+  border-color: color-mix(in srgb, var(--color-critical) 55%, transparent);
+}
+.purge .dot { background: var(--color-critical); }
+
+.loginSuccess {
+  color: var(--color-ok);
+  background: color-mix(in srgb, var(--color-ok) 12%, transparent);
+  border-color: color-mix(in srgb, var(--color-ok) 35%, transparent);
+}
+.loginSuccess .dot { background: var(--color-ok); }
+
+.loginFailure {
+  color: var(--color-warning);
+  background: color-mix(in srgb, var(--color-warning) 14%, transparent);
+  border-color: color-mix(in srgb, var(--color-warning) 40%, transparent);
+}
+.loginFailure .dot { background: var(--color-warning); }
+
+.logout {
+  color: var(--color-info);
+  background: color-mix(in srgb, var(--color-info) 12%, transparent);
+  border-color: color-mix(in srgb, var(--color-info) 35%, transparent);
+}
+.logout .dot { background: var(--color-info); }
+
+.tokenRedeemed {
+  color: var(--color-ok);
+  background: color-mix(in srgb, var(--color-ok) 12%, transparent);
+  border-color: color-mix(in srgb, var(--color-ok) 35%, transparent);
+}
+.tokenRedeemed .dot { background: var(--color-ok); }
+
+.unknown {
+  color: var(--color-text-muted);
+  background: var(--color-bg-input);
+  border-color: var(--color-border);
+}

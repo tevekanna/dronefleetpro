@@ -1,0 +1,54 @@
+meta {
+  name: 02 Per-username layer isolates identifiers — userA locked, userB still works
+  type: http
+  seq: 2
+}
+
+script:pre-request {
+  // Lock out userA with 10 bad logins, confirm it locks, then the actual
+  // request body uses userB's email and expects 401 (not 429).
+  const axios = require('axios');
+  const baseUrl = bru.getEnvVar('base_url');
+  const stamp = `${Date.now()}-${Math.floor(Math.random() * 1e6)}`;
+  const userA = `bruno-rl-isolA-${stamp}@dronefleetpro.local.test`;
+  const userB = `bruno-rl-isolB-${stamp}@dronefleetpro.local.test`;
+  bru.setEnvVar("rl_userB_email", userB);
+
+  async function loginStatus(email) {
+    try {
+      const r = await axios.post(`${baseUrl}/api/v1/auth/login`, { email, password: 'wrong' });
+      return r.status;
+    } catch (e) {
+      if (e.response) return e.response.status;
+      throw e;
+    }
+  }
+
+  for (let i = 0; i < 10; i++) {
+    const s = await loginStatus(userA);
+    if (s !== 401) throw new Error(`userA setup ${i + 1}: expected 401 got ${s}`);
+  }
+  const lockedCheck = await loginStatus(userA);
+  if (lockedCheck !== 429) {
+    throw new Error(`userA should be 429-locked, got ${lockedCheck}`);
+  }
+}
+
+post {
+  url: {{base_url}}/api/v1/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "{{rl_userB_email}}",
+    "password": "wrong-password-but-userB-is-fresh"
+  }
+}
+
+tests {
+  test("userB attempt is 401 (not 429) — counter is per-identifier", function() {
+    expect(res.getStatus()).to.equal(401);
+  });
+}

@@ -1,0 +1,63 @@
+meta {
+  name: 03 Pilot cannot create template (403)
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{base_url}}/api/v1/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "audit-test-pilot@dronefleetpro.local",
+    "password": "dronefleet2025"
+  }
+}
+
+docs {
+  Depends on the same fixture pilot user used by the audit-log Bruno
+  folder (see audit-log/11_login_non_admin.bru). If that user is not
+  seeded, this test will fail at the login step instead of the 403.
+
+  Logs in as a pilot, captures the token, then attempts a POST to the
+  templates endpoint and asserts 403 Forbidden.
+}
+
+script:post-response {
+  if (res.getStatus() !== 200) {
+    // Login failed (fixture user missing). Mark and skip the 403 check.
+    bru.setEnvVar("pilot_token", "");
+    return;
+  }
+  const pilotToken = res.getBody().token;
+  bru.setEnvVar("pilot_token", pilotToken);
+  // Fire the actual create attempt as the pilot.
+  const baseUrl = bru.getEnvVar("base_url") || "http://localhost:3000";
+  const modelId = bru.getEnvVar("seeded_template_model_id");
+  const fres = await fetch(`${baseUrl}/api/v1/maintenance-schedule-templates`, {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${pilotToken}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      model_id: parseInt(modelId, 10),
+      name: "TEST_PilotShouldNotCreate",
+      interval_type: "calendar_days",
+      interval_value: 7
+    })
+  });
+  bru.setEnvVar("pilot_create_status", String(fres.status));
+}
+
+tests {
+  test("login as pilot succeeded (status 200)", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("create-as-pilot returned 403 Forbidden", function() {
+    expect(bru.getEnvVar("pilot_create_status")).to.equal("403");
+  });
+}

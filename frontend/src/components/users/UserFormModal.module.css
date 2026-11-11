@@ -1,0 +1,209 @@
+/* SPDX-License-Identifier: AGPL-3.0-only */
+/* Copyright (C) 2026 Lars Wallström */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  width: 100%;
+  max-width: 520px;
+  /* Cap at the viewport and only scroll as a last resort on very short
+     screens. With the two-column field grid the common laptop case
+     (~800px tall) fits without a scrollbar. */
+  max-height: 94vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-modal);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-5);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin-bottom: var(--space-4);
+}
+
+.label {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  font-family: var(--font-label);
+}
+
+.input {
+  background: var(--color-bg-input);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-3);
+  color: var(--color-text-primary);
+  font-size: 0.9rem;
+  font-family: var(--font-body);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+.inputMono {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.select {
+  background: var(--color-bg-input);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-3);
+  color: var(--color-text-primary);
+  font-size: 0.9rem;
+  font-family: var(--font-body);
+}
+
+.helperText {
+  font-size: 0.72rem;
+  line-height: 1.3;
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+/* Opt-in compact rhythm for field-heavy form modals (e.g. the aircraft-model
+   form) so the whole form fits a common laptop height (~800px) without a
+   scrollbar. Applied alongside `.modal`; leaves the simpler shared modals
+   (User / MergeModel) at their default, roomier spacing. */
+.compact {
+  padding: var(--space-4);
+}
+
+.compact .title {
+  margin-bottom: var(--space-2);
+}
+
+.compact .field {
+  margin-bottom: var(--space-2);
+}
+
+.compact .input,
+.compact .select {
+  padding-top: var(--space-1);
+  padding-bottom: var(--space-1);
+}
+
+.compact .groupHeading {
+  margin: var(--space-2) 0 var(--space-1);
+  padding-top: var(--space-1);
+}
+
+/* Sub-section heading inside a form modal (e.g. "Weights & EASA class"). */
+.groupHeading {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  color: var(--color-text-primary);
+  margin: var(--space-4) 0 var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
+}
+
+/* Responsive two-column grid for the shorter fields in a form modal. Any
+   form modal sharing this stylesheet (User / Model / MergeModel) can opt in
+   by wrapping a pair of `.field`s in it. It collapses to a single column on
+   narrow viewports instead of squashing, and aligns fields to the top of the
+   row so an uneven pair of helper texts never misaligns the input boxes. */
+.fieldGrid2col {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  column-gap: var(--space-3);
+  align-items: start;
+}
+
+/* Let inputs/selects shrink to their grid track rather than forcing it wide. */
+.fieldGrid2col > .field {
+  min-width: 0;
+}
+
+.roleCheckboxGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-2) 0;
+}
+
+.roleCheckboxRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.88rem;
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  cursor: pointer;
+}
+
+.roleCheckboxRow input {
+  accent-color: var(--color-accent);
+  cursor: pointer;
+}
+
+.error {
+  color: var(--color-critical);
+  font-size: 0.78rem;
+  margin-top: 2px;
+}
+
+.formError {
+  color: var(--color-critical);
+  font-size: 0.8rem;
+  margin-bottom: var(--space-3);
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: flex-end;
+  margin-top: var(--space-2);
+}
+
+.btnCancel {
+  background: transparent;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-family: var(--font-body);
+}
+
+.btnSubmit {
+  background: var(--color-accent);
+  color: var(--color-text-inverse);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  font-family: var(--font-body);
+}
+
+.btnSubmit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

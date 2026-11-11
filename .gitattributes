@@ -1,0 +1,22 @@
+﻿# Force LF line endings for all text files in this repo.
+# CRLF conversions caused SQLx migration checksum mismatches.
+* text=auto eol=lf
+
+# Explicit rules for sensitive files
+*.sql text eol=lf
+*.rs text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.json text eol=lf
+*.toml text eol=lf
+
+# Binary files — never touch
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary

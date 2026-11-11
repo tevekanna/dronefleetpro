@@ -1,0 +1,36 @@
+meta {
+  name: 04 No new bulk_update audit row when affected count is 0
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{base_url}}/api/v1/audit-log?table_name=flights&action=UPDATE&search=bulk_update&per_page=1
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{purge_admin_token}}
+}
+
+docs {
+  Test fixture has zero flights, so the UPDATE flights SET pilot_id = NULL
+  inside purge_pilots affects zero rows and the audit summary is skipped.
+
+  audit_log is immutable, so prior runs (or sibling tests) may have left
+  bulk_update entries in the test org's history. Verify against the baseline
+  captured by test 01's pre-request script — this purge must contribute zero
+  new entries.
+}
+
+tests {
+  test("status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("zero NEW bulk_update entries from this purge", function() {
+    const baseline = bru.getEnvVar("bulk_update_baseline");
+    expect(baseline).to.be.a('string').and.not.empty;
+    expect(res.getBody().total).to.equal(parseInt(baseline, 10));
+  });
+}

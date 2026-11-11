@@ -1,0 +1,42 @@
+# Environment secrets
+.env
+.env.*
+!.env.example
+
+# Secrets (certificates, API tokens)
+secrets/
+
+# Rust
+backend/target/
+**/*.rs.bk
+backend/.sqlx/
+
+# Node
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Playwright
+frontend/playwright-report/
+frontend/test-results/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+docker-compose.override.yml
+
+# Runtime data
+uploads/
+backups/
+
+# Test log files (may contain sensitive GPS data)
+test_data/

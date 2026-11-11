@@ -1,0 +1,249 @@
+/* SPDX-License-Identifier: AGPL-3.0-only */
+/* Copyright (C) 2026 Lars Wallström */
+
+.page {
+  max-width: 1200px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-5);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  letter-spacing: 0.02em;
+}
+
+.btnAdd {
+  background: var(--color-accent);
+  color: var(--color-text-inverse);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-4);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-body);
+}
+
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+}
+
+.th {
+  text-align: left;
+  padding: var(--space-2) var(--space-3);
+  color: var(--color-text-muted);
+  font-family: var(--font-label);
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.td {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+}
+
+.mono {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+}
+
+.roleBadgeGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.roleBadge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.roleAdmin {
+  background: rgba(14, 165, 233, 0.15);
+  color: var(--color-accent);
+}
+
+.rolePilot {
+  background: rgba(34, 197, 94, 0.15);
+  color: var(--color-ok);
+}
+
+.roleTechnician {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--color-warning);
+}
+
+.roleSafetyOfficer {
+  background: rgba(99, 102, 241, 0.15);
+  color: var(--color-info);
+}
+
+.roleViewer {
+  background: rgba(138, 155, 176, 0.15);
+  color: var(--color-text-muted);
+}
+
+.statusDot {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dotActive {
+  background: var(--color-ok);
+}
+
+.dotInactive {
+  background: var(--color-text-muted);
+}
+
+.btnEdit {
+  background: transparent;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-1) var(--space-2);
+  cursor: pointer;
+  font-size: 0.8rem;
+  margin-right: var(--space-1);
+  font-family: var(--font-body);
+}
+
+.btnEdit:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btnDeactivate {
+  background: transparent;
+  color: var(--color-critical);
+  border: 1px solid var(--color-critical);
+  border-radius: var(--radius-sm);
+  padding: var(--space-1) var(--space-2);
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-family: var(--font-body);
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-10) var(--space-5);
+  background: var(--color-bg-surface);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.emptyTitle {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-2);
+}
+
+.emptyHint {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.loading {
+  color: var(--color-text-secondary);
+  padding: var(--space-4);
+}
+
+.error {
+  color: var(--color-critical);
+  padding: var(--space-4);
+}
+
+.inactiveRow {
+  opacity: 0.55;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.toggleLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.82rem;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-family: var(--font-body);
+}
+
+.toggleLabel input {
+  accent-color: var(--color-accent);
+}
+
+.btnReset,
+.btnReactivate {
+  background: transparent;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-1) var(--space-2);
+  cursor: pointer;
+  font-size: 0.8rem;
+  margin-right: var(--space-1);
+  font-family: var(--font-body);
+}
+
+.btnReset:hover {
+  border-color: var(--color-warning);
+  color: var(--color-warning);
+}
+
+.btnReactivate:hover {
+  border-color: var(--color-ok);
+  color: var(--color-ok);
+}
+
+.lastLogin {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+}

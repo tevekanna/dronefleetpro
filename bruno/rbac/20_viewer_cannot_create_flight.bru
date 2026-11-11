@@ -1,0 +1,31 @@
+meta {
+  name: 20 Viewer cannot create flight
+  type: http
+  seq: 20
+}
+
+post {
+  url: {{base_url}}/api/v1/flights
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{viewer_token}}
+}
+
+body:json {
+  {
+    "flight_datetime": "2026-04-01T10:00:00Z",
+    "duration_seconds": 600,
+    "easa_category": "Open-A2",
+    "mission_type": "Test Flight",
+    "preflight_done": true
+  }
+}
+
+tests {
+  test("status is 403", function() {
+    expect(res.getStatus()).to.equal(403);
+  });
+}

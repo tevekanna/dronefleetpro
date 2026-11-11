@@ -1,0 +1,50 @@
+/* SPDX-License-Identifier: AGPL-3.0-only */
+/* Copyright (C) 2026 Lars Wallström */
+
+.headerSummary {
+  display: flex;
+  gap: var(--space-2);
+  margin-left: auto;
+  align-items: center;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 500;
+  background: var(--color-bg-input);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+}
+.pillOverdue { color: var(--color-critical); border-color: color-mix(in srgb, var(--color-critical) 40%, transparent); }
+.pillWarning { color: var(--color-warning); border-color: color-mix(in srgb, var(--color-warning) 40%, transparent); }
+.pillOk      { color: var(--color-ok);       border-color: color-mix(in srgb, var(--color-ok) 35%, transparent); }
+
+.rowsContainer {
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.addButton {
+  background: transparent;
+  color: var(--color-accent);
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-3);
+  font-size: 0.78rem;
+  cursor: pointer;
+  margin: var(--space-3);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+.addButton:hover { color: var(--color-text-primary); border-color: var(--color-accent); }

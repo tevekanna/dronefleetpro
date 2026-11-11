@@ -1,0 +1,52 @@
+/* SPDX-License-Identifier: AGPL-3.0-only */
+/* Copyright (C) 2026 Lars Wallström */
+
+.container {
+  position: fixed;
+  bottom: var(--space-5);
+  right: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  z-index: 2000;
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-strong);
+  box-shadow: var(--shadow-modal);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  min-width: 260px;
+  max-width: 420px;
+  animation: slideIn 180ms ease-out;
+}
+
+.toastSuccess { border-left: 3px solid var(--color-ok); }
+.toastError   { border-left: 3px solid var(--color-critical); }
+.toastInfo    { border-left: 3px solid var(--color-accent); }
+
+.closeButton {
+  margin-left: auto;
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 2px 6px;
+  font-size: 1.1rem;
+  line-height: 1;
+}
+.closeButton:hover { color: var(--color-text-primary); }
+
+@keyframes slideIn {
+  from { transform: translateY(8px); opacity: 0; }
+  to   { transform: translateY(0);   opacity: 1; }
+}

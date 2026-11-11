@@ -1,0 +1,35 @@
+meta {
+  name: 09 Admin cannot demote themselves out of admin role
+  type: http
+  seq: 9
+}
+
+script:pre-request {
+  // Decode admin's user_id from the JWT we already have so we can target self.
+  const t = bru.getEnvVar("access_token");
+  const payload = JSON.parse(atob(t.split('.')[1]));
+  bru.setVar("admin_self_id", String(payload.sub));
+}
+
+put {
+  url: {{base_url}}/api/v1/users/{{admin_self_id}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+body:json {
+  {
+    "role": "viewer"
+  }
+}
+
+tests {
+  test("status is 409 (Conflict)", function() { expect(res.getStatus()).to.equal(409); });
+  test("error mentions own role", function() {
+    expect(res.getBody().error.toLowerCase()).to.contain('your own role');
+  });
+}

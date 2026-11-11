@@ -1,0 +1,50 @@
+meta {
+  name: 07 Resolve pilot's pilot_id from /auth/me
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{base_url}}/api/v1/auth/me
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{pilot_token}}
+}
+
+docs {
+  The /auth/login response does NOT include the user's linked pilot_id —
+  only id, name, email, role, user_code, org_id. So the env capture in
+  01_login_pilot.bru silently set `pilot_pilot_id` to 0, which broke
+  every downstream test that referenced it (notably 12_pilot_own_stats_
+  allowed.bru, which then called /pilots/0/stats and got a 403).
+
+  /auth/me returns the full user record including pilot_id. Run this
+  once after pilot login so subsequent rbac tests have the correct
+  pilot_pilot_id env var.
+}
+
+script:post-response {
+  if (res.getStatus() === 200) {
+    var b = res.getBody();
+    if (b && typeof b.pilot_id === "number") {
+      bru.setEnvVar("pilot_pilot_id", String(b.pilot_id));
+    }
+  }
+}
+
+tests {
+  test("status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("response has pilot_id linked", function() {
+    var b = res.getBody();
+    expect(b).to.have.property("pilot_id").that.is.a("number");
+  });
+  test("env var pilot_pilot_id captured (non-zero)", function() {
+    var pid = parseInt(bru.getEnvVar("pilot_pilot_id"), 10);
+    expect(pid, "pilot_pilot_id should be the ATP fixture's linked pilot (Carl Captain)").to.be.above(0);
+  });
+}

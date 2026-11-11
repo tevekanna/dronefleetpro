@@ -1,0 +1,31 @@
+meta {
+  name: 02 List paginated (page 2)
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{base_url}}/api/v1/audit-log?page=2&per_page=5
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+tests {
+  test("status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("page reported as 2", function() {
+    expect(res.getBody().page).to.equal(2);
+  });
+  test("per_page reported as 5", function() {
+    expect(res.getBody().per_page).to.equal(5);
+  });
+  test("total_pages = ceil(total / per_page)", function() {
+    const b = res.getBody();
+    expect(b.total_pages).to.equal(Math.ceil(b.total / b.per_page));
+  });
+}

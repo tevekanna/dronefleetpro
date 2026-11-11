@@ -1,0 +1,26 @@
+meta {
+  name: 11 Pilot blocked from another pilot's stats
+  type: http
+  seq: 11
+}
+
+get {
+  url: {{base_url}}/api/v1/pilots/1/stats
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{pilot_token}}
+}
+
+docs {
+  ATP is linked to pilot id 4 (Carl Captain) by fixtures.sql. Requesting
+  stats for pilot id 1 (a different pilot) must return 403.
+}
+
+tests {
+  test("status is 403", function() {
+    expect(res.getStatus()).to.equal(403);
+  });
+}

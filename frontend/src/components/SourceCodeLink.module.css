@@ -1,0 +1,18 @@
+/* SPDX-License-Identifier: AGPL-3.0-only */
+/* Copyright (C) 2026 Lars Wallström */
+
+.link {
+  display: inline-block;
+  font-family: var(--font-label);
+  font-size: 11px;
+  letter-spacing: 0.03em;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.link:hover,
+.link:focus-visible {
+  color: var(--color-accent);
+  text-decoration: underline;
+}

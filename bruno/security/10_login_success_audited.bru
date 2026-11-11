@@ -1,0 +1,47 @@
+meta {
+  name: 10 Successful login writes a LOGIN_SUCCESS audit row
+  type: http
+  seq: 10
+}
+
+post {
+  url: {{base_url}}/api/v1/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "admin@dronefleetpro.local",
+    "password": "dronefleet2025"
+  }
+}
+
+docs {
+  Logs in as admin and stashes the token. The next test (11) re-uses the
+  token to query the audit log and verify the LOGIN_SUCCESS row was written
+  for THIS login (the most recent matching row should sit within the last
+  ~10 seconds).
+
+  Note: the security suite is sequential. Tests 01–06 saturate the rate
+  limiter for a different email (`rl-test@`), so test 10 onward uses the
+  admin email which has its own bucket.
+}
+
+script:post-response {
+  if (res.getStatus() === 200 && res.getBody() && res.getBody().token) {
+    bru.setEnvVar("access_token", res.getBody().token);
+    // Stash a high-water timestamp so the audit-log lookup in 10b can
+    // find the row written by THIS login.
+    bru.setEnvVar("login_audit_anchor", new Date().toISOString());
+  }
+}
+
+tests {
+  test("status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("token stored", function() {
+    expect(bru.getEnvVar("access_token")).to.be.a('string').and.not.empty;
+  });
+}

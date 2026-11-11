@@ -1,0 +1,37 @@
+meta {
+  name: 08 Filters — distinct tables + users for this org
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{base_url}}/api/v1/audit-log/filters
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+tests {
+  test("status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("tables is a deduplicated sorted array", function() {
+    const t = res.getBody().tables;
+    expect(t).to.be.an('array');
+    const sorted = [...t].sort();
+    expect(t).to.deep.equal(sorted);
+    expect(new Set(t).size).to.equal(t.length);
+  });
+  test("users have id, name, user_code", function() {
+    const u = res.getBody().users;
+    expect(u).to.be.an('array');
+    u.forEach(row => {
+      expect(row).to.have.property('id').that.is.a('number');
+      expect(row).to.have.property('name').that.is.a('string');
+      expect(row).to.have.property('user_code').that.is.a('string');
+    });
+  });
+}
