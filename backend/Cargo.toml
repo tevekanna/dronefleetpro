@@ -1,6 +1,6 @@
 [package]
 name = "dronefleetpro-backend"
-version = "2.55.0"
+version = "2.55.1"
 edition = "2021"
 authors = ["Lars Wallström <lars@terrapics.se>"]
 license = "AGPL-3.0-only"
