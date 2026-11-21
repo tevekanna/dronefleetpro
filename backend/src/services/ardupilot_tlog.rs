@@ -22,6 +22,7 @@
 
 use mavlink::dialects::ardupilotmega::MavMessage;
 use mavlink::{MavlinkVersion, Message};
+use mavlink_tlog::{TlogSlice, Version};
 
 use crate::errors::AppError;
 use crate::services::dji_parser::{FlightPreview, TrajectoryPoint};
@@ -77,8 +78,6 @@ struct ParsedFrame<'a> {
     msgid: u32,
     version: MavlinkVersion,
     payload: &'a [u8],
-    /// Total bytes consumed by this record (8-byte timestamp + the frame).
-    total: usize,
 }
 
 /// Public entry point: parse a `.tlog` byte slice into one preview per
@@ -103,20 +102,21 @@ pub fn parse_tlog(bytes: &[u8], filename: &str) -> Result<Vec<ArduPilotSegmentPr
     let mut last_ts: u64 = 0;
 
     // --- Framing walk -------------------------------------------------------
-    let mut cursor = 0usize;
-    while bytes.len().saturating_sub(cursor) >= 12 {
-        let frame = match read_record(bytes, cursor) {
-            Some(f) => f,
-            // Desync: bad magic byte, or a computed frame that overruns the
-            // buffer. Advance one byte and re-attempt the [timestamp + frame]
-            // read — telemetry captures occasionally drop bytes. The >= 12
-            // loop bound stops a corrupt tail from looping forever.
-            None => {
-                cursor += 1;
-                continue;
-            }
+    // mavlink-tlog checks every frame's CRC (with the CRC_EXTRA seed of all
+    // all.xml messages) and resyncs byte by byte past damaged regions, so a
+    // stray 0xFD/0xFE in corrupt data never becomes a frame.
+    for rec in TlogSlice::new(bytes) {
+        let frame = ParsedFrame {
+            ts_us: rec.timestamp_us,
+            sysid: rec.frame.sys_id(),
+            compid: rec.frame.comp_id(),
+            msgid: rec.frame.msg_id(),
+            version: match rec.frame.version() {
+                Version::V1 => MavlinkVersion::V1,
+                Version::V2 => MavlinkVersion::V2,
+            },
+            payload: rec.frame.payload(),
         };
-        let advance = frame.total;
         valid_frames += 1;
         last_ts = frame.ts_us;
 
@@ -136,8 +136,6 @@ pub fn parse_tlog(bytes: &[u8], filename: &str) -> Result<Vec<ArduPilotSegmentPr
                 &mut home_position_seen,
             );
         }
-
-        cursor += advance;
     }
 
     if valid_frames == 0 {
@@ -181,67 +179,6 @@ pub fn parse_tlog(bytes: &[u8], filename: &str) -> Result<Vec<ArduPilotSegmentPr
         .collect();
 
     Ok(previews)
-}
-
-/// Reads the 8-byte big-endian timestamp at `pos` followed by one MAVLink
-/// frame. Returns `None` on a bad magic byte or a frame that would overrun
-/// the buffer (the caller treats that as desync and advances one byte).
-fn read_record(buf: &[u8], pos: usize) -> Option<ParsedFrame<'_>> {
-    let ts = u64::from_be_bytes(buf.get(pos..pos + 8)?.try_into().ok()?);
-    let f = pos + 8;
-    match *buf.get(f)? {
-        0xFD => {
-            // v2: [0]=0xFD [1]=len [2]=incompat [3]=compat [4]=seq [5]=sysid
-            //     [6]=compid [7..10]=msgid(LE 3 bytes) [10..]=payload, 2B CRC,
-            //     +13B signature if incompat & 0x01.
-            if buf.len() < f + 10 {
-                return None;
-            }
-            let payload_len = buf[f + 1] as usize;
-            let signed = buf[f + 2] & 0x01 != 0;
-            let sysid = buf[f + 5];
-            let compid = buf[f + 6];
-            let msgid = u32::from_le_bytes([buf[f + 7], buf[f + 8], buf[f + 9], 0]);
-            let frame_total = 12 + payload_len + if signed { 13 } else { 0 };
-            if buf.len() < f + frame_total {
-                return None;
-            }
-            Some(ParsedFrame {
-                ts_us: ts,
-                sysid,
-                compid,
-                msgid,
-                version: MavlinkVersion::V2,
-                payload: &buf[f + 10..f + 10 + payload_len],
-                total: 8 + frame_total,
-            })
-        }
-        0xFE => {
-            // v1: [0]=0xFE [1]=len [2]=seq [3]=sysid [4]=compid [5]=msgid(1B)
-            //     [6..]=payload, 2B CRC.
-            if buf.len() < f + 6 {
-                return None;
-            }
-            let payload_len = buf[f + 1] as usize;
-            let sysid = buf[f + 3];
-            let compid = buf[f + 4];
-            let msgid = buf[f + 5] as u32;
-            let frame_total = 8 + payload_len;
-            if buf.len() < f + frame_total {
-                return None;
-            }
-            Some(ParsedFrame {
-                ts_us: ts,
-                sysid,
-                compid,
-                msgid,
-                version: MavlinkVersion::V1,
-                payload: &buf[f + 6..f + 6 + payload_len],
-                total: 8 + frame_total,
-            })
-        }
-        _ => None,
-    }
 }
 
 /// Routes one decoded message into the event stream / global metadata.
@@ -622,6 +559,50 @@ pub fn haversine_m(lat1: f64, lon1: f64, lat2: f64, lon2: f64) -> f32 {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// One `.tlog` record: big-endian timestamp + an autopilot HEARTBEAT.
+    fn heartbeat_record(ts_us: u64, armed: bool) -> Vec<u8> {
+        // custom_mode u32, type=2 (quad), autopilot=3 (ArduPilot), base_mode,
+        // system_status=4, mavlink_version=3.
+        let base_mode = if armed { 0x81 } else { 0x01 };
+        let payload = [0, 0, 0, 0, 2, 3, base_mode, 4, 3];
+        let header = mavlink_tlog::Header {
+            seq: 0,
+            sys_id: 1,
+            comp_id: 1,
+            msg_id: 0,
+        };
+        let mut out = [0u8; 280];
+        let n = mavlink_tlog::encode(Version::V2, header, &payload, None, &mut out).unwrap();
+        let mut rec = ts_us.to_be_bytes().to_vec();
+        rec.extend_from_slice(&out[..n]);
+        rec
+    }
+
+    #[test]
+    fn tlog_valid_frames_produce_segment() {
+        let mut log = heartbeat_record(1_700_000_000_000_000, false);
+        log.extend(heartbeat_record(1_700_000_001_000_000, true));
+        log.extend(heartbeat_record(1_700_000_060_000_000, false));
+        let segs = parse_tlog(&log, "ok.tlog").unwrap();
+        assert_eq!(segs.len(), 1);
+    }
+
+    #[test]
+    fn tlog_bad_crc_frames_are_not_messages() {
+        // Same bytes, CRC damaged on every record: nothing is a frame.
+        let mut log = Vec::new();
+        for (ts, armed) in [
+            (1_700_000_000_000_000, false),
+            (1_700_000_001_000_000, true),
+            (1_700_000_060_000_000, false),
+        ] {
+            let mut rec = heartbeat_record(ts, armed);
+            *rec.last_mut().unwrap() ^= 0xFF;
+            log.extend(rec);
+        }
+        assert!(parse_tlog(&log, "damaged.tlog").is_err());
+    }
 
     #[test]
     fn segments_single_arm_disarm() {
